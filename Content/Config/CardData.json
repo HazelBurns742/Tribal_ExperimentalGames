@@ -1,0 +1,61 @@
+{
+  "TroopCards": [
+    {
+      "CardId": 001,
+      "Name": "Infantry",
+      "Points": 2,
+      "Health": 1,
+      "Combat": 1,
+      "Image": "Infantry.jpg",
+      "Model": "Infantry.fbx",
+    },
+    {
+      "CardId": 002,
+      "Name": "Archers",
+      "Points": 3,
+      "Health": 1,
+      "Combat": 2,
+      "Image": "Archers.jpg",
+      "Model": "Archers.fbx",
+    },
+    {
+      "CardId": 003,
+      "Name": "Cavalry",
+      "Points": 5,
+      "Health": 2,
+      "Combat": 3,
+      "Image": "Cavalry.jpg",
+      "Model": "Cavalry.fbx",
+    }
+  ]
+
+  "MonsterCards": [
+    {
+      "CardId": 101,
+      "Name": "Cyclops",
+      "Points": 8,
+      "Health": 4,
+      "Combat": 4,
+      "Image": "Cyclops.jpg",
+      "Model": "Cyclops.fbx",
+    },
+    {
+      "CardId": 102,
+      "Name": "Wendigo",
+      "Points": 9,
+      "Health": 4,
+      "Combat": 5,
+      "Image": "Wendigo.jpg",
+      "Model": "Wendigo.fbx",
+    },
+    {
+      "CardId": 103,
+      "Name": "Minotaur",
+      "Points": 10,
+      "Health": 5,
+      "Combat": 5,
+      "Image": "Minotaur.jpg",
+      "Model": "Minotaur.fbx",
+    }
+  ]
+}
