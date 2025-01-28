@@ -73,6 +73,19 @@ UCardData* ACardManager::GetRandomCard()
 {
     //Random card slection code
 
+    int32 RandEndNum = FMath::RandRange(1, 3); 
+    int32 RandStartNum = FMath::RandRange(0, 1);
+
+    int32 Number; 
+
+    if (RandStartNum == 1) {
+        Number = 100 + RandEndNum; 
+    }
+
+    else {
+        Number = RandEndNum;
+    }
+
 	return nullptr;
 }
 
