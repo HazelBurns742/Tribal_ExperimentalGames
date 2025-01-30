@@ -17,6 +17,14 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "DatasmithImporter",
+			"Enabled": true
+		},
+		{
+			"Name": "DatasmithFBXImporter",
+			"Enabled": true
 		}
 	]
 }
