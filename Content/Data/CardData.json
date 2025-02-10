@@ -1,61 +1,55 @@
 {
   "TroopCards": [
     {
-      "CardId": 001,
       "Name": "Infantry",
       "Image": "Infantry.jpg",
       "Model": "Infantry.fbx",
       "Points": 2,
       "Health": 1,
-      "Combat": 1,
+      "Combat": 1
     },
     {
-      "CardId": 002,
       "Name": "Archers",
       "Image": "Archers.jpg",
       "Model": "Archers.fbx",
       "Points": 3,
       "Health": 1,
-      "Combat": 2,
+      "Combat": 2
     },
     {
-      "CardId": 003,
       "Name": "Cavalry",
       "Image": "Cavalry.jpg",
       "Model": "Cavalry.fbx",
       "Points": 5,
       "Health": 2,
-      "Combat": 3,
+      "Combat": 3
     }
-  ]
+  ],
 
   "MonsterCards": [
     {
-      "CardId": 101,
       "Name": "Cyclops",
       "Image": "Cyclops.jpg",
       "Model": "Cyclops.fbx",
       "Points": 8,
       "Health": 4,
-      "Combat": 4,
+      "Combat": 4
     },
     {
-      "CardId": 102,
       "Name": "Skinwalker",
       "Image": "Skinwalker.jpg",
       "Model": "Skinwalker.fbx",
       "Points": 9,
       "Health": 4,
-      "Combat": 5,
+      "Combat": 5
     },
     {
-      "CardId": 103,
       "Name": "Minotaur",
       "Image": "Minotaur.jpg",
       "Model": "Minotaur.fbx",
       "Points": 10,
       "Health": 5,
-      "Combat": 5,
+      "Combat": 5
     }
   ]
 }
