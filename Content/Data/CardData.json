@@ -4,7 +4,7 @@
       "Name": "Infantry",
       "Image": "Infantry.jpg",
       "Model": "Infantry.fbx",
-      "Points": 2,
+      "Points": 1,
       "Health": 1,
       "Combat": 1
     },
@@ -12,7 +12,7 @@
       "Name": "Archers",
       "Image": "Archers.jpg",
       "Model": "Archers.fbx",
-      "Points": 3,
+      "Points": 1,
       "Health": 1,
       "Combat": 2
     },
@@ -23,6 +23,38 @@
       "Points": 5,
       "Health": 2,
       "Combat": 3
+    },
+    {
+      "Name": "Mage",
+      "Image": "Mage.jpg",
+      "Model": "Mage.fbx",
+      "Points": 3,
+      "Health": 2,
+      "Combat": 3
+    },
+    {
+      "Name": "Necromancer",
+      "Image": "Necromancer.jpg",
+      "Model": "Necromancer.fbx",
+      "Points": 1,
+      "Health": 3,
+      "Combat": 1
+    },
+    {
+      "Name": "Theif",
+      "Image": "Theif.jpg",
+      "Model": "Theif.fbx",
+      "Points": 2,
+      "Health": 2,
+      "Combat": 1
+    },
+    {
+      "Name": "Beast Tamer",
+      "Image": "Beast_Tamer.jpg",
+      "Model": "Beast_Tamer.fbx",
+      "Points": 4,
+      "Health": 3,
+      "Combat": 0
     }
   ],
 
@@ -31,7 +63,7 @@
       "Name": "Cyclops",
       "Image": "Cyclops.jpg",
       "Model": "Cyclops.fbx",
-      "Points": 8,
+      "Points": 5,
       "Health": 4,
       "Combat": 4
     },
@@ -39,17 +71,52 @@
       "Name": "Skinwalker",
       "Image": "Skinwalker.jpg",
       "Model": "Skinwalker.fbx",
-      "Points": 9,
+      "Points": 3,
       "Health": 4,
-      "Combat": 5
+      "Combat": 4
     },
     {
       "Name": "Minotaur",
       "Image": "Minotaur.jpg",
       "Model": "Minotaur.fbx",
-      "Points": 10,
+      "Points": 5,
+      "Health": 3,
+      "Combat": 4
+    }
+  ],
+
+  "AnimalCards": [
+    {
+      "Name": "Bear",
+      "Image": "Bear.jpg",
+      "Model": "Bear.fbx",
+      "Points": 3,
       "Health": 5,
+      "Combat": 3
+    },
+    {
+      "Name": "Wolf",
+      "Image": "Wolf.jpg",
+      "Model": "Wolf.fbx",
+      "Points": 3,
+      "Health": 3,
       "Combat": 5
+    },
+    {
+      "Name": "Snake",
+      "Image": "Snake.jpg",
+      "Model": "Snake.fbx",
+      "Points": 1,
+      "Health": 1,
+      "Combat": 1
+    },
+    {
+      "Name": "Horse",
+      "Image": "Horse.jpg",
+      "Model": "Horse.fbx",
+      "Points": 1,
+      "Health": 1,
+      "Combat": 0
     }
   ]
 }
