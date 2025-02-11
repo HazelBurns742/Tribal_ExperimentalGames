@@ -39,10 +39,22 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 
 					//Create a new card object from JSON
 					UCardData* NewCardData = NewObject<UCardData>(this); 
+
+					//DATA FROM JSON
+					//Data for every card
+					NewCardData->Name = CardObject->GetStringField(TEXT("Name"));
+					NewCardData->Image = CardObject->GetStringField(TEXT("Image"));
+					NewCardData->Model = CardObject->GetStringField(TEXT("Model"));
+
+					//Data for undefined
 					NewCardData->ActionPoints = CardObject->GetNumberField(TEXT("ActionPoints"));
+
+					//Data for entities
 					NewCardData->Health = CardObject->GetNumberField(TEXT("Health"));
 					NewCardData->Combat = CardObject->GetNumberField(TEXT("Combat"));
 
+
+					UE_LOG(LogTemp, Display, TEXT("Card data loaded"));
 					CardDataList.Add(NewCardData);
 				}
 			}
@@ -52,7 +64,7 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 		}
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("Cany load JSON"));
+		UE_LOG(LogTemp, Warning, TEXT("Cant load JSON"));
 	}
 }
 
@@ -61,6 +73,7 @@ UCardData* ACardManager::RandomCard() {
 
 	if (CardDataList.Num() > 0) {
 		int32 RandomIndex = FMath::RandRange(0, CardDataList.Num() - 1);
+		UE_LOG(LogTemp, Display, TEXT("Random Card"), RandomIndex);
 		return CardDataList[RandomIndex]; 
 	}
 

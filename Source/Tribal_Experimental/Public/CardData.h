@@ -16,18 +16,15 @@ public:
 	UCardData();
 
 
-	////Data for every card
-	//UPROPERTY(BlueprintReadWrite, Category = "CardData")
-	//int32 CardID;
+	//Data for every card
+	UPROPERTY(BlueprintReadWrite, Category = "CardData")
+	FString Name;
 
-	//UPROPERTY(BlueprintReadWrite, Category = "CardData")
-	//FString Name;
+	UPROPERTY(BlueprintReadWrite, Category = "CardData")
+	FString Image;
 
-	//UPROPERTY(BlueprintReadWrite, Category = "CardData")
-	//FString Image;
-
-	//UPROPERTY(BlueprintReadWrite, Category = "CardData")
-	//FString Model;
+	UPROPERTY(BlueprintReadWrite, Category = "CardData")
+	FString Model;
 
 
 	//Data for UNDEFINED

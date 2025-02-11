@@ -11,8 +11,8 @@
 UCardData::UCardData()
 {
 	//Default values
-	ActionPoints = 0;
-	Health = 0;
-	Combat = 0;
+	ActionPoints = 1;
+	Health = 1;
+	Combat = 1;
 
 }
