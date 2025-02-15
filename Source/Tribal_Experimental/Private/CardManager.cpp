@@ -16,8 +16,23 @@ ACardManager::ACardManager()
 
 void ACardManager::BeginPlay() {
 	Super::BeginPlay();
-	FString FilePath = FPaths::ProjectSavedDir() + TEXT("Config/CardData.json");
-	LoadCardData(FilePath);
+	FString FilePath = FPaths::ProjectDir() + TEXT("Config/CardDataStorage.json");
+	
+	//DEBUGGING
+	
+	UE_LOG(LogTemp, Display, TEXT("File path: %s"), *FilePath);
+
+	if (FPaths::FileExists(FilePath)) {
+		UE_LOG(LogTemp, Display, TEXT("File found: %s"), *FilePath);
+
+		//CALLING LOAD CARD DATA
+		LoadCardData(FilePath);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("File does not exist: %s"), *FilePath);
+	}
+
+
 }
 
 //Load card data from JSON
