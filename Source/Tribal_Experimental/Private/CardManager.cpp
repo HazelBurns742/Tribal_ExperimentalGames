@@ -55,7 +55,7 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 
 			for (const FString& CardType: CardTypes) {
 				const TArray<TSharedPtr<FJsonValue>>* CardsArray;
-				if (JsonObject->TryGetArrayField(TEXT("TroopCards"), CardsArray)) {
+				if (JsonObject->TryGetArrayField(*CardType, CardsArray)) {
 					for (const TSharedPtr<FJsonValue>& CardValue : *CardsArray) {
 						TSharedPtr<FJsonObject> CardObject = CardValue->AsObject();
 
