@@ -62,7 +62,7 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 					NewCardData->Model = CardObject->GetStringField(TEXT("Model"));
 
 					//Data for undefined
-					NewCardData->ActionPoints = CardObject->GetNumberField(TEXT("ActionPoints"));
+					NewCardData->Points = CardObject->GetNumberField(TEXT("Points"));
 
 					//Data for entities
 					NewCardData->Health = CardObject->GetNumberField(TEXT("Health"));

@@ -29,7 +29,7 @@ public:
 
 	//Data for UNDEFINED
 	UPROPERTY(BlueprintReadWrite, Category = "CardData")
-	int32 ActionPoints;
+	int32 Points;
 
 
 	//Data for Entities
