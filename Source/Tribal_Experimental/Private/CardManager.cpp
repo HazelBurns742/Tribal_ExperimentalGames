@@ -98,9 +98,12 @@ UCardData* ACardManager::RandomCard() {
 
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("No cards in the list"));
+		return nullptr; 
 	}
 }
 
+
+//MOVE TO TURN MANAGER
 UCardData* ACardManager::SetHandOfCards() {
 
 	//int32 DefaultHandSize = 5;  
@@ -135,4 +138,6 @@ UCardData* ACardManager::SetHandOfCards() {
 
 	//	}
 	//}
+
+	return nullptr;
 }
