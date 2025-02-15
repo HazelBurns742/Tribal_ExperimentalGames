@@ -46,10 +46,6 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
 		TSharedPtr<FJsonObject> JsonObject; 
 
-
-		
-
-
 		if (FJsonSerializer::Deserialize(Reader, JsonObject)) {
 			TArray<FString> CardTypes = { TEXT("TroopCards"), TEXT("MonsterCards"), TEXT("AnimalCards") };
 
@@ -93,7 +89,6 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 }
 
 UCardData* ACardManager::RandomCard() {
-	//Random Card
 
 	if (CardDataList.Num() > 0) {
 		int32 RandomIndex = FMath::RandRange(0, CardDataList.Num() - 1);
@@ -103,7 +98,41 @@ UCardData* ACardManager::RandomCard() {
 
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("No cards in the list"));
-		return nullptr;
 	}
 }
 
+UCardData* ACardManager::SetHandOfCards() {
+
+	//int32 DefaultHandSize = 5;  
+	//int32 PlayerHandSize = GetPlayerHandSize();
+
+	//if (PlayerHandSize < DefaultHandSize) {
+	//	UE_LOG(LogTemp, Display, TEXT("Hand NOT full"));
+
+	//	int32 NumCardsToDraw = DefaultHandSize - PlayerHandSize; 
+	//	for (int32 i = 0; i < NumCardsToDraw; i++) {
+	//		
+	//		UCardData* NewCard = RandomCard(); 
+	//		//Add NewCard to players hand
+	//		//PlayerHandSize++
+	//	
+	//	}
+	//	UE_LOG(LogTemp, Display, TEXT("Hand now full"));
+	//}
+
+	//if (PlayerHandSize > DefaultHandSize) {
+	//	int32 NumCardsToDiscard = PlayerHandSize - DefaultHandSize; 
+	//	for (int32 i = 0; i < NumCardsToDiscard; i++) {
+	//		bool toldToDiscard = false;
+	//		if (!toldToDiscard) {
+	//			//Tell player to discard
+	//			toldToDiscard = true;
+	//		}
+
+	//		//NOT SURE IF I SHLD DO THIS HERE?????
+	//		///Discard selected card
+	//		///PlayerHandSize--; 
+
+	//	}
+	//}
+}
