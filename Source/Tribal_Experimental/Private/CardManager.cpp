@@ -46,33 +46,42 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
 		TSharedPtr<FJsonObject> JsonObject; 
 
+
+		
+
+
 		if (FJsonSerializer::Deserialize(Reader, JsonObject)) {
-			const TArray<TSharedPtr<FJsonValue>>* CardsArray;
-			if (JsonObject->TryGetArrayField(TEXT("TroopCards"), CardsArray)) {
-				for (const TSharedPtr<FJsonValue>& CardValue : *CardsArray) {
-					TSharedPtr<FJsonObject> CardObject = CardValue->AsObject();
+			TArray<FString> CardTypes = { TEXT("TroopCards"), TEXT("MonsterCards"), TEXT("AnimalCards") };
 
-					//Create a new card object from JSON
-					UCardData* NewCardData = NewObject<UCardData>(this); 
+			for (const FString& CardType: CardTypes) {
+				const TArray<TSharedPtr<FJsonValue>>* CardsArray;
+				if (JsonObject->TryGetArrayField(TEXT("TroopCards"), CardsArray)) {
+					for (const TSharedPtr<FJsonValue>& CardValue : *CardsArray) {
+						TSharedPtr<FJsonObject> CardObject = CardValue->AsObject();
 
-					//DATA FROM JSON
-					//Data for every card
-					NewCardData->Name = CardObject->GetStringField(TEXT("Name"));
-					NewCardData->Image = CardObject->GetStringField(TEXT("Image"));
-					NewCardData->Model = CardObject->GetStringField(TEXT("Model"));
+						//Create a new card object from JSON
+						UCardData* NewCardData = NewObject<UCardData>(this);
 
-					//Data for undefined
-					NewCardData->Points = CardObject->GetNumberField(TEXT("Points"));
+						//DATA FROM JSON
+						//Data for every card
+						NewCardData->Name = CardObject->GetStringField(TEXT("Name"));
+						NewCardData->Image = CardObject->GetStringField(TEXT("Image"));
+						NewCardData->Model = CardObject->GetStringField(TEXT("Model"));
 
-					//Data for entities
-					NewCardData->Health = CardObject->GetNumberField(TEXT("Health"));
-					NewCardData->Combat = CardObject->GetNumberField(TEXT("Combat"));
+						//Data for undefined
+						NewCardData->Points = CardObject->GetNumberField(TEXT("Points"));
+
+						//Data for entities
+						NewCardData->Health = CardObject->GetNumberField(TEXT("Health"));
+						NewCardData->Combat = CardObject->GetNumberField(TEXT("Combat"));
 
 
-					UE_LOG(LogTemp, Display, TEXT("Card data loaded"));
-					CardDataList.Add(NewCardData);
+						UE_LOG(LogTemp, Display, TEXT("Card data loaded"));
+						CardDataList.Add(NewCardData);
+					}
 				}
 			}
+			RandomCard();
 		}
 		else {
 			UE_LOG(LogTemp, Warning, TEXT("Cant deserialize JSON"));
@@ -88,7 +97,7 @@ UCardData* ACardManager::RandomCard() {
 
 	if (CardDataList.Num() > 0) {
 		int32 RandomIndex = FMath::RandRange(0, CardDataList.Num() - 1);
-		UE_LOG(LogTemp, Display, TEXT("Random Card"), RandomIndex);
+		UE_LOG(LogTemp, Display, TEXT("Random Card = %s"), *CardDataList[RandomIndex]->Name);
 		return CardDataList[RandomIndex]; 
 	}
 
