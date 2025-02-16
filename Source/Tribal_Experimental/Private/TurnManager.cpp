@@ -35,7 +35,7 @@ void ATurnManager::AddClientToSession()
 	NewClient.ClientID = FString(TEXT("Player")) + FString::FromInt(AllClients.Num() + 1);
 	AllClients.Add(NewClient);
 	UE_LOG(LogTemp, Display, TEXT("Added client %s"), *NewClient.ClientID);
-
+	UE_LOG(LogTemp, Display, TEXT("ALL clients %d"), AllClients.Num());
 	//SetClientHand(NewClient);
 }
 
