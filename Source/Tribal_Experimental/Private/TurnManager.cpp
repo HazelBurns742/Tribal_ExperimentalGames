@@ -2,6 +2,9 @@
 
 
 #include "TurnManager.h"
+#include "CardManager.h"
+
+
 
 // Sets default values
 ATurnManager::ATurnManager()
@@ -25,3 +28,46 @@ void ATurnManager::Tick(float DeltaTime)
 
 }
 
+
+void ATurnManager::AddClientToSession()
+{
+	FClientData NewClient; 
+	NewClient.ClientID = FString(TEXT("Player")) + FString::FromInt(AllClients.Num() + 1);
+	AllClients.Add(NewClient);
+	UE_LOG(LogTemp, Display, TEXT("Added client %s"), *NewClient.ClientID);
+
+	//SetClientHand(NewClient);
+}
+
+void ATurnManager::SetClientHand(FClientData& Client) {
+
+	int32 DefaultHandSize = 5;  
+	int32 PlayerHandSize = Client.HandOfCards.Num();
+
+	if (PlayerHandSize < DefaultHandSize) {
+		UE_LOG(LogTemp, Display, TEXT("Hand NOT full"));
+
+		int32 NumCardsToDraw = DefaultHandSize - PlayerHandSize; 
+		for (int32 i = 0; i < NumCardsToDraw; i++) {
+			
+			UCardData* NewCard = CardManager->RandomCard(); 
+			Client.HandOfCards.Add(NewCard);
+		
+		}
+		UE_LOG(LogTemp, Display, TEXT("Hand now full"));
+	}
+
+	//if (PlayerHandSize > DefaultHandSize) {
+	// UE_LOG(LogTemp, Display, TEXT("Too many cards in hand"));
+	// 
+	//	int32 NumCardsToDiscard = PlayerHandSize - DefaultHandSize; 
+	//	for (int32 i = 0; i < NumCardsToDiscard; i++) {
+	//		bool toldToDiscard = false;
+	//		if (!toldToDiscard) {
+	//			//Tell player to discard
+	//			toldToDiscard = true;
+	//		}
+
+	//	}
+	//}
+}

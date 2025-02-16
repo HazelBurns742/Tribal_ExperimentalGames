@@ -22,7 +22,6 @@ protected:
 public:
 	void LoadCardData(const FString& FilePath); //Func loads card data from JSON
 	UCardData* RandomCard(); //Func gets random card
-	UCardData* SetHandOfCards();
 
 
 private:
