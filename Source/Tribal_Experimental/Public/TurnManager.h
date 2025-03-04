@@ -18,6 +18,7 @@ struct FClientData
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data")
 	FString ClientID;
 
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data") 
 	TArray<UCardData*> HandOfCards; 
 };
@@ -44,8 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Management")
 	ACardManager* CardManager;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Clients")
-	TArray<FClientData> AllClients; 
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TurnManager")
+	int32 ClientNum;
 
 	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
 	void AddClientToSession();

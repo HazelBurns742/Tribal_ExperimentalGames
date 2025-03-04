@@ -24,7 +24,7 @@ void ATurnManager::BeginPlay()
 // Called every frame
 void ATurnManager::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime); 
 
 }
 
@@ -32,10 +32,10 @@ void ATurnManager::Tick(float DeltaTime)
 void ATurnManager::AddClientToSession()
 {
 	FClientData NewClient; 
-	NewClient.ClientID = FString(TEXT("Player")) + FString::FromInt(AllClients.Num() + 1);
-	AllClients.Add(NewClient);
+	NewClient.ClientID = FString(TEXT("Player")) + FString::FromInt(ClientNum); 
+	UE_LOG(LogTemp, Display, TEXT("Number of clients: %d"), ClientNum); 
+
 	UE_LOG(LogTemp, Display, TEXT("Added client %s"), *NewClient.ClientID);
-	UE_LOG(LogTemp, Display, TEXT("ALL clients %d"), AllClients.Num());
 	//SetClientHand(NewClient);
 }
 
