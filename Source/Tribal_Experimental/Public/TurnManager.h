@@ -52,5 +52,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
 	void AddClientToSession();
 
+
 	void SetClientHand(FClientData& Client);
 };

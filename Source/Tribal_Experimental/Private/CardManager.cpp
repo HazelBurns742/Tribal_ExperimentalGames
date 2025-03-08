@@ -7,32 +7,41 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "CardData.h"
+#include <Net/UnrealNetwork.h>
 
 
 ACardManager::ACardManager()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	bReplicates = true;
+
+	RootComp = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	RootComponent = RootComp;
 }
 
 void ACardManager::BeginPlay() {
 	Super::BeginPlay();
-	FString FilePath = FPaths::ProjectDir() + TEXT("Config/CardDataStorage.json");
-	
-	//DEBUGGING
-	
-	UE_LOG(LogTemp, Display, TEXT("File path: %s"), *FilePath);
 
-	if (FPaths::FileExists(FilePath)) {
-		UE_LOG(LogTemp, Display, TEXT("File found: %s"), *FilePath);
+	if (HasAuthority()) {
+		if (!isCardDataLoaded) {
 
-		//CALLING LOAD CARD DATA
-		LoadCardData(FilePath);
+			FString FilePath = FPaths::ProjectDir() + TEXT("Config/CardDataStorage.json");
+
+			//DEBUGGING
+
+			UE_LOG(LogTemp, Display, TEXT("File path: %s"), *FilePath);
+
+			if (FPaths::FileExists(FilePath)) {
+				UE_LOG(LogTemp, Display, TEXT("File found: %s"), *FilePath);
+
+				//CALLING LOAD CARD DATA
+				LoadCardData(FilePath);
+			}
+			else {
+				UE_LOG(LogTemp, Warning, TEXT("File does not exist: %s"), *FilePath);
+			}
+		}
 	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("File does not exist: %s"), *FilePath);
-	}
-
-
 }
 
 //Load card data from JSON
@@ -73,10 +82,14 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 
 
 						UE_LOG(LogTemp, Display, TEXT("Card data loaded"));
+						UE_LOG(LogTemp, Display, TEXT("CardDataList size: %d"), CardDataList.Num());
+
 						CardDataList.Add(NewCardData);
+						UE_LOG(LogTemp, Display, TEXT("ADDED NEW CARD, CardDataList size: %d"), CardDataList.Num());
 					}
 				}
 			}
+			isCardDataLoaded = true;
 		}
 		else {
 			UE_LOG(LogTemp, Warning, TEXT("Cant deserialize JSON"));
@@ -90,13 +103,28 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 UCardData* ACardManager::RandomCard() {
 
 	if (CardDataList.Num() > 0) {
+
 		int32 RandomIndex = FMath::RandRange(0, CardDataList.Num() - 1);
-		UE_LOG(LogTemp, Display, TEXT("Random Card = %s"), *CardDataList[RandomIndex]->Name);
-		return CardDataList[RandomIndex]; 
+
+		if (CardDataList[RandomIndex].IsValid()) {
+			UE_LOG(LogTemp, Display, TEXT("Random Card = %s"), *CardDataList[RandomIndex]->Name);
+			return CardDataList[RandomIndex].Get();
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Card at index %d is nullptr"), RandomIndex);
+			return nullptr;
+		}
 	}
 
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("No cards in the list"));
 		return nullptr; 
 	}
+}
+
+void ACardManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACardManager, CardDataList);
 }

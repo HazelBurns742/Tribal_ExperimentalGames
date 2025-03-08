@@ -15,15 +15,21 @@ class TRIBAL_EXPERIMENTAL_API ACardManager : public AActor
 
 public:
 	ACardManager();
-	
+
+
 protected: 
 	virtual void BeginPlay() override; 
 
 public:
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* RootComp;
+
 	void LoadCardData(const FString& FilePath); //Func loads card data from JSON
 	UCardData* RandomCard(); //Func gets random card
 
+	UPROPERTY(Replicated)
+	TArray<TWeakObjectPtr<UCardData>> CardDataList; //Array holds all loaded card data
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-private:
-	TArray<UCardData*> CardDataList; //Array holds all loaded card data
+	bool isCardDataLoaded = false; 
 };

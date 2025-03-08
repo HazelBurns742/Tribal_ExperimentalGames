@@ -3,7 +3,7 @@
 
 #include "TurnManager.h"
 #include "CardManager.h"
-
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -18,7 +18,7 @@ ATurnManager::ATurnManager()
 void ATurnManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	CardManager = Cast<ACardManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACardManager::StaticClass()));
 }
 
 // Called every frame
@@ -36,38 +36,55 @@ void ATurnManager::AddClientToSession()
 	UE_LOG(LogTemp, Display, TEXT("Number of clients: %d"), ClientNum); 
 
 	UE_LOG(LogTemp, Display, TEXT("Added client %s"), *NewClient.ClientID);
-	//SetClientHand(NewClient);
+	SetClientHand(NewClient);
+
 }
+
 
 void ATurnManager::SetClientHand(FClientData& Client) {
 
-	int32 DefaultHandSize = 5;  
-	int32 PlayerHandSize = Client.HandOfCards.Num();
 
-	if (PlayerHandSize < DefaultHandSize) {
-		UE_LOG(LogTemp, Display, TEXT("Hand NOT full"));
-
-		int32 NumCardsToDraw = DefaultHandSize - PlayerHandSize; 
-		for (int32 i = 0; i < NumCardsToDraw; i++) {
-			
-			UCardData* NewCard = CardManager->RandomCard(); 
-			Client.HandOfCards.Add(NewCard);
-		
-		}
-		UE_LOG(LogTemp, Display, TEXT("Hand now full"));
+	if (CardManager == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("CardManager is null!"));
+		return;  // Avoid crashing, early exit if CardManager is null
 	}
 
-	//if (PlayerHandSize > DefaultHandSize) {
-	// UE_LOG(LogTemp, Display, TEXT("Too many cards in hand"));
-	// 
-	//	int32 NumCardsToDiscard = PlayerHandSize - DefaultHandSize; 
-	//	for (int32 i = 0; i < NumCardsToDiscard; i++) {
-	//		bool toldToDiscard = false;
-	//		if (!toldToDiscard) {
-	//			//Tell player to discard
-	//			toldToDiscard = true;
-	//		}
+	CardManager->RandomCard();
 
+	//int32 DefaultHandSize = 5;  
+	//int32 PlayerHandSize = Client.HandOfCards.Num();
+
+	//if (PlayerHandSize < DefaultHandSize) {
+	//	UE_LOG(LogTemp, Display, TEXT("Hand NOT full"));
+
+	//	int32 NumCardsToDraw = DefaultHandSize - PlayerHandSize; 
+	//	for (int32 i = 0; i < NumCardsToDraw; i++) {
+	//		
+	//		CardManager->RandomCard();
+
+	//		/*UCardData* NewCard = CardManager->RandomCard(); 
+	//		if (NewCard != nullptr) {
+	//			Client.HandOfCards.Add(NewCard);
+	//		}
+	//		else{
+	//			UE_LOG(LogTemp, Warning, TEXT("NewCard, after calling radnom card was a null pointer"));
+	//		}*/
+	//	
 	//	}
+	//	UE_LOG(LogTemp, Display, TEXT("Hand now full"));
 	//}
+
+	////if (PlayerHandSize > DefaultHandSize) {
+	//// UE_LOG(LogTemp, Display, TEXT("Too many cards in hand"));
+	//// 
+	////	int32 NumCardsToDiscard = PlayerHandSize - DefaultHandSize; 
+	////	for (int32 i = 0; i < NumCardsToDiscard; i++) {
+	////		bool toldToDiscard = false;
+	////		if (!toldToDiscard) {
+	////			//Tell player to discard
+	////			toldToDiscard = true;
+	////		}
+
+	////	}
+	////}
 }
