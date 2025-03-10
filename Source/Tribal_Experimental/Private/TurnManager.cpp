@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 
 
+
 // Sets default values
 ATurnManager::ATurnManager()
 {
@@ -36,43 +37,64 @@ void ATurnManager::AddClientToSession()
 	UE_LOG(LogTemp, Display, TEXT("Number of clients: %d"), ClientNum); 
 
 	UE_LOG(LogTemp, Display, TEXT("Added client %s"), *NewClient.ClientID);
-	SetClientHand(NewClient);
 
+	if (CardManager != nullptr) {
+		MyCardDeck = CardManager->ReplicatedCardDataList; // if shuffling the card list, make hard copy here
+		if (!MyCardDeck[1].Name.IsEmpty()) {
+			UE_LOG(LogTemp, Display, TEXT("My Card Deck [1] is %s"), *MyCardDeck[1].Name);
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("MyCardDeck[1] is null at start too"));
+		}
+		ShuffleMyDeck(MyCardDeck);
+		MyCardDeckPointer = 0;
+		SetClientHand(NewClient);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Card Manger was null, DIDNT CALL SHUFFLE OR SET HAND"));
+	}
 }
 
+void ATurnManager::ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle) {
+	int32 NumCardsInDeck = DeckToShuffle.Num();
+	for (int32 i = 0; i < NumCardsInDeck - 1; i++) {
+		int32 RandomIndex = FMath::RandRange(i, NumCardsInDeck -1);
+		DeckToShuffle.Swap(i, RandomIndex);
+	}
+	MyCardDeck = DeckToShuffle;
+}
 
 void ATurnManager::SetClientHand(FClientData& Client) {
-
-
-	if (CardManager == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("CardManager is null!"));
-		return;  // Avoid crashing, early exit if CardManager is null
+	if (MyCardDeck.Num() <= 1) {
+		UE_LOG(LogTemp, Error, TEXT("My Card Deck is empty"));
+		return;
 	}
 
-	CardManager->RandomCard();
+	//USE MY SHUFFLED DECK, USE POINTERS TO GO THROUGH THE LSIT
 
-	//int32 DefaultHandSize = 5;  
-	//int32 PlayerHandSize = Client.HandOfCards.Num();
+	int32 DefaultHandSize = 5;  
+	int32 PlayerHandSize = Client.HandOfCards.Num();
 
-	//if (PlayerHandSize < DefaultHandSize) {
-	//	UE_LOG(LogTemp, Display, TEXT("Hand NOT full"));
+	if (PlayerHandSize < DefaultHandSize) {
+		UE_LOG(LogTemp, Display, TEXT("Hand NOT full"));
 
-	//	int32 NumCardsToDraw = DefaultHandSize - PlayerHandSize; 
-	//	for (int32 i = 0; i < NumCardsToDraw; i++) {
-	//		
-	//		CardManager->RandomCard();
-
-	//		/*UCardData* NewCard = CardManager->RandomCard(); 
-	//		if (NewCard != nullptr) {
-	//			Client.HandOfCards.Add(NewCard);
-	//		}
-	//		else{
-	//			UE_LOG(LogTemp, Warning, TEXT("NewCard, after calling radnom card was a null pointer"));
-	//		}*/
-	//	
-	//	}
-	//	UE_LOG(LogTemp, Display, TEXT("Hand now full"));
-	//}
+		int32 NumCardsToDraw = DefaultHandSize - PlayerHandSize; 
+		for (int32 i = 0; i < NumCardsToDraw; i++) {
+			// Add card to the player's hand and move the pointer
+			if (MyCardDeckPointer < MyCardDeck.Num()) {
+				Client.HandOfCards.Add(MyCardDeck[MyCardDeckPointer]);
+				UE_LOG(LogTemp, Display, TEXT("Added card %s"), *MyCardDeck[MyCardDeckPointer].Name);
+				MyCardDeckPointer++;
+			}
+			else {
+				// If the pointer exceeds the deck size, reshuffle
+				ShuffleMyDeck(MyCardDeck);
+				MyCardDeckPointer = 0;
+				UE_LOG(LogTemp, Display, TEXT("Reshuffled Deck"));
+			}
+		}
+		UE_LOG(LogTemp, Display, TEXT("Hand now full"));
+	}
 
 	////if (PlayerHandSize > DefaultHandSize) {
 	//// UE_LOG(LogTemp, Display, TEXT("Too many cards in hand"));

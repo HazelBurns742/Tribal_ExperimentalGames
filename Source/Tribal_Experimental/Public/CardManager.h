@@ -25,10 +25,12 @@ public:
 	USceneComponent* RootComp;
 
 	void LoadCardData(const FString& FilePath); //Func loads card data from JSON
-	UCardData* RandomCard(); //Func gets random card
+
+	TArray<UCardData*> CardDataList; //Array holds all loaded card data
 
 	UPROPERTY(Replicated)
-	TArray<TWeakObjectPtr<UCardData>> CardDataList; //Array holds all loaded card data
+	TArray<FCardDataToReplicate> ReplicatedCardDataList;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	bool isCardDataLoaded = false; 

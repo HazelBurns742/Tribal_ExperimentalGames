@@ -20,7 +20,7 @@ struct FClientData
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data") 
-	TArray<UCardData*> HandOfCards; 
+	TArray<FCardDataToReplicate> HandOfCards; 
 };
 
 
@@ -38,6 +38,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override; 
 
+private: 
+	TArray<FCardDataToReplicate> MyCardDeck;
+	int32 MyCardDeckPointer; 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -54,4 +58,6 @@ public:
 
 
 	void SetClientHand(FClientData& Client);
+
+	void ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle); 
 };

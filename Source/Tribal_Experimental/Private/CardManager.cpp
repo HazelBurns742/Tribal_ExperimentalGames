@@ -80,12 +80,8 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 						NewCardData->Health = CardObject->GetNumberField(TEXT("Health"));
 						NewCardData->Combat = CardObject->GetNumberField(TEXT("Combat"));
 
-
-						UE_LOG(LogTemp, Display, TEXT("Card data loaded"));
-						UE_LOG(LogTemp, Display, TEXT("CardDataList size: %d"), CardDataList.Num());
-
 						CardDataList.Add(NewCardData);
-						UE_LOG(LogTemp, Display, TEXT("ADDED NEW CARD, CardDataList size: %d"), CardDataList.Num());
+						ReplicatedCardDataList.Add(FCardDataToReplicate(NewCardData));  
 					}
 				}
 			}
@@ -100,31 +96,10 @@ void ACardManager::LoadCardData(const FString& FilePath) {
 	}
 }
 
-UCardData* ACardManager::RandomCard() {
-
-	if (CardDataList.Num() > 0) {
-
-		int32 RandomIndex = FMath::RandRange(0, CardDataList.Num() - 1);
-
-		if (CardDataList[RandomIndex].IsValid()) {
-			UE_LOG(LogTemp, Display, TEXT("Random Card = %s"), *CardDataList[RandomIndex]->Name);
-			return CardDataList[RandomIndex].Get();
-		}
-		else {
-			UE_LOG(LogTemp, Warning, TEXT("Card at index %d is nullptr"), RandomIndex);
-			return nullptr;
-		}
-	}
-
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("No cards in the list"));
-		return nullptr; 
-	}
-}
 
 void ACardManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ACardManager, CardDataList);
+	DOREPLIFETIME(ACardManager, ReplicatedCardDataList);
 }
