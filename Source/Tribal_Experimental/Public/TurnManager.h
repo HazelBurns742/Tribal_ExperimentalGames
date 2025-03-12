@@ -8,6 +8,8 @@
 #include "CardManager.h" 
 #include "TurnManager.generated.h"
 
+class UCardDisplay; 
+
 USTRUCT(BlueprintType)
 struct FClientData
 {
@@ -60,4 +62,6 @@ public:
 	void SetClientHand(FClientData& Client);
 
 	void ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle); 
+
+	UCardDisplay* GetCardDisplay();
 };
