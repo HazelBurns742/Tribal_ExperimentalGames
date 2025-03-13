@@ -5,7 +5,8 @@
 #include "CardManager.h"
 #include "CardDisplay.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/HUD.h"
+#include "Blueprint/UserWidget.h" 
+
 
 
 
@@ -98,14 +99,24 @@ void ATurnManager::SetClientHand(FClientData& Client) {
 		UE_LOG(LogTemp, Display, TEXT("Hand now full"));
 	}
 
-	if (UCardDisplay* CardDisplay = GetCardDisplay()) {
-		CardDisplay->UpdateCardDisplay(Client.HandOfCards);
-		UE_LOG(LogTemp, Display, TEXT("Calling UpdateCardDisplay with %d cards"), Client.HandOfCards.Num());
+	if (CachedCardDisplay) {
+		CachedCardDisplay->UpdateCardDisplay(Client.HandOfCards);
+		UE_LOG(LogTemp, Display, TEXT("CardDisplay updated for client %d"), ClientNum);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CardDisplay widget is not available in viewport"));
 	}
 
-	else {
-		UE_LOG(LogTemp, Error, TEXT("Failed to get UCardDisplay"));
-	}
+
+	//CardDisplay->UpdateCardDisplay(Client.HandOfCards);
+
+	//UCardDisplay* CardDisplay = Cast<UCardDisplay>(UUserWidget::GetWidgetFromName(TEXT("CardDisplayBP")));
+
+	//CardDisplay->UpdateCardDisplay(Client.HandOfCards);
+
+
+
 
 	////if (PlayerHandSize > DefaultHandSize) {
 	//// UE_LOG(LogTemp, Display, TEXT("Too many cards in hand"));
@@ -120,20 +131,4 @@ void ATurnManager::SetClientHand(FClientData& Client) {
 
 	////	}
 	////}
-}
-
-UCardDisplay* ATurnManager::GetCardDisplay() {
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-
-	if (PlayerController && PlayerController->GetHUD())
-	{
-		UUserWidget* HUDWidget = Cast<UUserWidget>(PlayerController->GetHUD());
-
-		if (HUDWidget && HUDWidget->IsA<UCardDisplay>())
-		{
-			return Cast<UCardDisplay>(HUDWidget);
-		}
-	}
-
-	return nullptr;
 }

@@ -63,5 +63,6 @@ public:
 
 	void ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle); 
 
-	UCardDisplay* GetCardDisplay();
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Turn Manager")
+	UCardDisplay* CachedCardDisplay;
 };

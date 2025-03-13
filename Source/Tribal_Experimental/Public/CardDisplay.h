@@ -20,17 +20,16 @@ public:
     UCardWidget* CreateCardWidget(const FCardDataToReplicate& CardData);
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Display")
-    UClass* CardWidgetClass;
+    TSubclassOf<UCardWidget> CardWidgetClass;
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Card Dsiplay")
+    UHorizontalBox* CardContainer;
 
     UFUNCTION(BlueprintCallable, Category = "Card Dsiplay")
     void UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfCards);
 
 protected:
     virtual void NativeConstruct() override;
-
-private:
-    UPROPERTY(meta = (BindWidget))
-    UHorizontalBox* CardContainer; 
 };
 
 

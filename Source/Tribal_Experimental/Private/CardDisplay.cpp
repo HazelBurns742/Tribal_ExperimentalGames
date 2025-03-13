@@ -15,9 +15,15 @@ UCardDisplay::UCardDisplay(const FObjectInitializer& ObjectInitializer)
 void UCardDisplay::NativeConstruct()
 {
 	Super::NativeConstruct(); 
-    if (CardContainer)
+    UHorizontalBox* FoundBox = Cast<UHorizontalBox>(GetWidgetFromName(TEXT("CardContainerWidget")));
+    if (FoundBox)
     {
-        CardContainer->ClearChildren();
+        CardContainer = FoundBox;
+        UE_LOG(LogTemp, Display, TEXT("Successfully found CardContainerWidget"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Failed to find CardContainerWidget"));
     }
 }
 
@@ -42,6 +48,7 @@ UCardWidget* UCardDisplay::CreateCardWidget(const FCardDataToReplicate& CardData
 
     return NewCardWidget;
 }
+
 
 void UCardDisplay::UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfCards)
 {
