@@ -75,13 +75,13 @@ void ATurnManager::SetClientHand(FClientData& Client) {
 
 	//USE MY SHUFFLED DECK, USE POINTERS TO GO THROUGH THE LSIT
 
-	int32 DefaultHandSize = 5;  
+	int32 DefaultHandSize = 5;
 	int32 PlayerHandSize = Client.HandOfCards.Num();
 
 	if (PlayerHandSize < DefaultHandSize) {
 		UE_LOG(LogTemp, Display, TEXT("Hand NOT full"));
 
-		int32 NumCardsToDraw = DefaultHandSize - PlayerHandSize; 
+		int32 NumCardsToDraw = DefaultHandSize - PlayerHandSize;
 		for (int32 i = 0; i < NumCardsToDraw; i++) {
 			// Add card to the player's hand and move the pointer
 			if (MyCardDeckPointer < MyCardDeck.Num()) {
@@ -105,8 +105,9 @@ void ATurnManager::SetClientHand(FClientData& Client) {
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CardDisplay widget is not available in viewport"));
+		UE_LOG(LogTemp, Warning, TEXT("CardDisplay BP is null"));
 	}
+
 
 
 	//CardDisplay->UpdateCardDisplay(Client.HandOfCards);

@@ -22,7 +22,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Display")
     TSubclassOf<UCardWidget> CardWidgetClass;
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Card Dsiplay")
+    UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Card Dsiplay")
     UHorizontalBox* CardContainer;
 
     UFUNCTION(BlueprintCallable, Category = "Card Dsiplay")
