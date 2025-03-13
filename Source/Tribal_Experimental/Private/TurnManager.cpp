@@ -32,6 +32,31 @@ void ATurnManager::Tick(float DeltaTime)
 
 }
 
+void ATurnManager::CreateAndAddWidgetToViewport(){
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0); 
+
+	if (PlayerController) {
+	CachedCardDisplay = CreateWidget<UCardDisplay>(PlayerController, CardDisplayClass);
+		if (CachedCardDisplay)
+		{
+			CachedCardDisplay->AddToViewport();
+			PlayerController->bShowMouseCursor = true;
+			FInputModeUIOnly InputMode;
+			PlayerController->SetInputMode(InputMode);
+
+			UE_LOG(LogTemp, Display, TEXT("CardDisplay Widget added to player viewport"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to create CardDisplay widget"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid player controller"));
+	}
+}
+
 
 void ATurnManager::AddClientToSession()
 {

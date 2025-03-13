@@ -63,6 +63,14 @@ public:
 
 	void ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle); 
 
+	//Viewports and display
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Turn Manager")
 	UCardDisplay* CachedCardDisplay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn Manager")
+	TSubclassOf<UCardDisplay> CardDisplayClass;
+
+	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
+	void CreateAndAddWidgetToViewport();
+
 };
