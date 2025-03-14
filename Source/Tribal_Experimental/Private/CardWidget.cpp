@@ -2,6 +2,7 @@
 
 
 #include "CardWidget.h"
+#include "CardDisplay.h"
 #include "Components/TextBlock.h"
 
 
@@ -10,6 +11,10 @@ void UCardWidget::NativeConstruct()
 	Super::NativeConstruct();
 
     SetCardVariables(CardName, CardPoints, CardHealth, CardCombat);
+
+    if (CardButton) {
+        CardButton->OnClicked.AddDynamic(this, &UCardWidget::OnCardClicked);
+    }
 }
 
 void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Health, int32 Combat)
@@ -19,10 +24,6 @@ void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Heal
     CardHealth = Health; 
     CardCombat = Combat;
 
-
-    if (CardNameText) {
-        CardNameText->SetText(FText::FromString(CardName));
-    }
 
     if (CardNameText) {
         CardNameText->SetText(FText::FromString(CardName));
@@ -40,4 +41,9 @@ void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Heal
     {
         CardCombatText->SetText(FText::FromString(FString::Printf(TEXT("CP : %d"), CardCombat)));
     }
+}
+
+void UCardWidget::OnCardClicked() {
+    UE_LOG(LogTemp, Warning, TEXT("Card %s clicked"), *CardName);
+    CardDisplayRef->SetLastClickedCard(this);
 }

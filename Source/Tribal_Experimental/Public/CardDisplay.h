@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "Blueprint/UserWidget.h" 
+#include "Components/Button.h"
 #include "CardDisplay.generated.h"
 
 class UCardWidget;
@@ -27,6 +28,20 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Card Dsiplay")
     void UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfCards);
+
+    //Confirm card
+    UPROPERTY(meta = (BindWidget))
+    UButton* ConfirmButton;
+
+    UCardWidget* LastClickedCard = nullptr;
+
+    UFUNCTION(BlueprintCallable, Category = "Card Dsiplay")
+    void OnConfirmClicked();
+
+    UFUNCTION(BlueprintCallable, Category = "Card Dsiplay")
+    void SetCardDisplayVisible();
+
+    void SetLastClickedCard(UCardWidget* ClickedCard) { LastClickedCard = ClickedCard; }
 
 protected:
     virtual void NativeConstruct() override;

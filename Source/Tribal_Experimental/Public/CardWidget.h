@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h" 
 #include "CardWidget.generated.h"
 
 class UTextBlock;
+class UCardDisplay;
 
 UCLASS()
 class TRIBAL_EXPERIMENTAL_API UCardWidget : public UUserWidget
@@ -17,10 +19,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Card Display")
 	void SetCardVariables(const FString& Name, int32 Points, int32 Health, int32 Combat);
 
+    UFUNCTION()
+    void OnCardClicked();
+
+    void SetCardDisplayReference(UCardDisplay* Display) { CardDisplayRef = Display; }
+
 protected:
 	virtual void NativeConstruct() override;
 
 private:
+
+    UPROPERTY(meta = (BindWidget))
+    UButton* CardButton;
+
     UPROPERTY(meta = (BindWidget))
     UTextBlock* CardNameText;
 
@@ -37,4 +48,6 @@ private:
     int32 CardPoints;
     int32 CardHealth;
     int32 CardCombat; 
+
+    UCardDisplay* CardDisplayRef = nullptr;
 };

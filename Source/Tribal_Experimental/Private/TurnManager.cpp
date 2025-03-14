@@ -125,6 +125,7 @@ void ATurnManager::SetClientHand(FClientData& Client) {
 	}
 
 	if (CachedCardDisplay) {
+		CachedCardDisplay->SetCardDisplayVisible();
 		CachedCardDisplay->UpdateCardDisplay(Client.HandOfCards);
 		UE_LOG(LogTemp, Display, TEXT("CardDisplay updated for client %d"), ClientNum);
 	}

@@ -6,6 +6,7 @@
 #include "Components/HorizontalBox.h"
 #include "Components/Widget.h"
 #include "CardData.h"
+#include "Kismet/GameplayStatics.h"
 
 UCardDisplay::UCardDisplay(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -25,6 +26,11 @@ void UCardDisplay::NativeConstruct()
     {
         UE_LOG(LogTemp, Warning, TEXT("Failed to find CardContainerWidget"));
     }
+
+    if (ConfirmButton)
+    {
+        ConfirmButton->OnClicked.AddDynamic(this, &UCardDisplay::OnConfirmClicked);
+    }
 }
 
 UCardWidget* UCardDisplay::CreateCardWidget(const FCardDataToReplicate& CardData)
@@ -40,6 +46,8 @@ UCardWidget* UCardDisplay::CreateCardWidget(const FCardDataToReplicate& CardData
     {
         NewCardWidget->SetCardVariables(CardData.Name, CardData.Points, CardData.Health, CardData.Combat);
         UE_LOG(LogTemp, Display, TEXT("Created card widget: %s"), *CardData.Name);
+
+        NewCardWidget->SetCardDisplayReference(this);
     } 
     else
     {
@@ -71,4 +79,36 @@ void UCardDisplay::UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfC
             UE_LOG(LogTemp, Error, TEXT("Failed to create card widget for %s"), *CardData.Name);
         }
     }
+}
+
+void UCardDisplay::OnConfirmClicked()
+{
+    if (LastClickedCard)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Card selected, do logic?"));
+        
+        //Hide menu (Unset visbility)
+        SetVisibility(ESlateVisibility::Hidden);
+        APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+        //Set input to game (not UI)
+        FInputModeGameOnly InputMode;
+        PlayerController->SetInputMode(InputMode);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No card selected!"));
+    }
+}
+
+void UCardDisplay::SetCardDisplayVisible() {
+
+    //Show menu (Set visibility)
+     SetVisibility(ESlateVisibility::Visible);
+     APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+     //Set input to UI (not gaem)
+     FInputModeUIOnly InputMode;
+     PlayerController->SetInputMode(InputMode);
+    
 }
