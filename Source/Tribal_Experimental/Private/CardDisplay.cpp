@@ -5,7 +5,9 @@
 #include "CardWidget.h"  
 #include "Components/HorizontalBox.h"
 #include "Components/Widget.h"
+#include "Components/TextBlock.h"
 #include "CardData.h"
+#include "TurnManager.h"
 #include "Kismet/GameplayStatics.h"
 
 UCardDisplay::UCardDisplay(const FObjectInitializer& ObjectInitializer)
@@ -81,12 +83,34 @@ void UCardDisplay::UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfC
     }
 }
 
+void UCardDisplay::RemoveCardFromDisplay(UCardWidget* CardToRemove) {
+    if (CardContainer) {
+        CardContainer->RemoveChild(CardToRemove);
+        UE_LOG(LogTemp, Display, TEXT("Removed card from the display"));
+    }
+};
+
 void UCardDisplay::OnConfirmClicked()
 {
     if (LastClickedCard)
     {
         UE_LOG(LogTemp, Warning, TEXT("Card selected, do logic?"));
-        
+        RemoveCardFromDisplay(LastClickedCard);
+
+        //Find turn manager in scene
+        AActor* FoundTurnManager = UGameplayStatics::GetActorOfClass(GetWorld(), ATurnManager::StaticClass());
+        ATurnManager* TurnManager = Cast<ATurnManager>(FoundTurnManager);
+
+        if (TurnManager) {
+            //Pass card name to turn manager
+            UTextBlock* NameToPass = LastClickedCard->CardNameText;
+            FText NameToPassText = NameToPass->GetText();
+            UE_LOG(LogTemp, Warning, TEXT("Passing card name to turn manager"));
+            TurnManager->ClientChoseCard(NameToPassText.ToString());
+        }
+        else {
+            UE_LOG(LogTemp, Error, TEXT("CANT FIND TURN MANAGER IN SCENE TO PASS CHOSEN CARD NAME"));
+        }
         //Hide menu (Unset visbility)
         SetVisibility(ESlateVisibility::Hidden);
         APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);

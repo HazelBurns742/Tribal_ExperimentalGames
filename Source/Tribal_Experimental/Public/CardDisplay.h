@@ -43,6 +43,8 @@ public:
 
     void SetLastClickedCard(UCardWidget* ClickedCard) { LastClickedCard = ClickedCard; }
 
+    void RemoveCardFromDisplay(UCardWidget* CardToRemove); 
+
 protected:
     virtual void NativeConstruct() override;
 };

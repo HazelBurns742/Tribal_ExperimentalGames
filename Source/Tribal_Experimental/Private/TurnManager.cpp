@@ -65,6 +65,7 @@ void ATurnManager::AddClientToSession()
 	UE_LOG(LogTemp, Display, TEXT("Number of clients: %d"), ClientNum); 
 
 	UE_LOG(LogTemp, Display, TEXT("Added client %s"), *NewClient.ClientID);
+	NewClient.ActionPoints = 5; 
 
 	if (CardManager != nullptr) {
 		MyCardDeck = CardManager->ReplicatedCardDataList; // if shuffling the card list, make hard copy here
@@ -135,16 +136,6 @@ void ATurnManager::SetClientHand(FClientData& Client) {
 	}
 
 
-
-	//CardDisplay->UpdateCardDisplay(Client.HandOfCards);
-
-	//UCardDisplay* CardDisplay = Cast<UCardDisplay>(UUserWidget::GetWidgetFromName(TEXT("CardDisplayBP")));
-
-	//CardDisplay->UpdateCardDisplay(Client.HandOfCards);
-
-
-
-
 	////if (PlayerHandSize > DefaultHandSize) {
 	//// UE_LOG(LogTemp, Display, TEXT("Too many cards in hand"));
 	//// 
@@ -158,4 +149,15 @@ void ATurnManager::SetClientHand(FClientData& Client) {
 
 	////	}
 	////}
+}
+
+void ATurnManager::ClientChoseCard(FString ChosenCardName) {
+
+	UE_LOG(LogTemp, Warning, TEXT("Turn manager recieved chosen card name: %s"), *ChosenCardName)
+	//For every card in hand of cards, 
+	// If handofcards card.name = CardWidget.name 
+	//	actionpoints - card.points;
+	//	place card? //Need to call tile logic first? 
+	//	Remove card from hand of cards
+
 }

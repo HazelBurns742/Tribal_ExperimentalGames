@@ -24,6 +24,9 @@ public:
 
     void SetCardDisplayReference(UCardDisplay* Display) { CardDisplayRef = Display; }
 
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* CardNameText;
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -31,9 +34,6 @@ private:
 
     UPROPERTY(meta = (BindWidget))
     UButton* CardButton;
-
-    UPROPERTY(meta = (BindWidget))
-    UTextBlock* CardNameText;
 
     UPROPERTY(meta = (BindWidget))
     UTextBlock* CardPointsText;

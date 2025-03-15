@@ -20,6 +20,8 @@ struct FClientData
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data")
 	FString ClientID;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data")
+	int32 ActionPoints;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data") 
 	TArray<FCardDataToReplicate> HandOfCards; 
@@ -73,4 +75,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
 	void CreateAndAddWidgetToViewport();
 
+	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
+	void ClientChoseCard(FString ChosenCardName); 
 };
