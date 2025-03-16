@@ -32,7 +32,7 @@ struct FClientData
 
 
 
-UCLASS()
+UCLASS(Blueprintable)
 class TRIBAL_EXPERIMENTAL_API ATurnManager : public AActor
 {
 	GENERATED_BODY() 
@@ -83,7 +83,7 @@ public:
 	TSubclassOf<UCardDisplay> CardDisplayClass;
 
 	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
-	void CreateAndAddWidgetToViewport();
+	void CreateAndAddWidgetToViewport(APlayerController* PlayerController);
 
 	//After clients have done things with their cards
 	UFUNCTION(BlueprintCallable, Category = "Turn Manager")

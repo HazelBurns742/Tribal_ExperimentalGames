@@ -29,6 +29,7 @@ ATurnManager::ATurnManager()
 void ATurnManager::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("TURN MANAGER WAS SPAWNED!"));
 	CardManager = Cast<ACardManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACardManager::StaticClass()));
 }
 
@@ -39,8 +40,7 @@ void ATurnManager::Tick(float DeltaTime)
 
 }
 
-void ATurnManager::CreateAndAddWidgetToViewport(){
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0); 
+void ATurnManager::CreateAndAddWidgetToViewport(APlayerController* PlayerController){
 
 	if (PlayerController) {
 	CachedCardDisplay = CreateWidget<UCardDisplay>(PlayerController, CardDisplayClass);
