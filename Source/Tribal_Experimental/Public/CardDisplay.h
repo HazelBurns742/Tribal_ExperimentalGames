@@ -27,7 +27,7 @@ public:
     UHorizontalBox* CardContainer;
 
     UFUNCTION(BlueprintCallable, Category = "Card Dsiplay")
-    void UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfCards);
+    void UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfCards, FString ClientID);
 
     //Confirm card
     UPROPERTY(meta = (BindWidget))
@@ -43,6 +43,7 @@ public:
 
     void SetLastClickedCard(UCardWidget* ClickedCard) { LastClickedCard = ClickedCard; }
 
+    FString DislayClientIDRef; 
     void RemoveCardFromDisplay(UCardWidget* CardToRemove); 
 
 protected:

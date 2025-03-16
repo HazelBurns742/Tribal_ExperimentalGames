@@ -21,10 +21,13 @@ struct FClientData
 	FString ClientID;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data")
-	int32 ActionPoints;
+	TArray<FCardDataToReplicate> MyCardDeck;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data") 
-	TArray<FCardDataToReplicate> HandOfCards; 
+	TArray<FCardDataToReplicate> HandOfCards;  
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data")
+	int32 ActionPoints; 
 };
 
 
@@ -47,8 +50,15 @@ private:
 	int32 MyCardDeckPointer; 
 
 public:	
+		bool bHasSpawnedTurnManager = false;
+
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* RootComp;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(Replicated)
+	TArray<FClientData> Clients;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Management")
 	ACardManager* CardManager;
@@ -75,6 +85,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
 	void CreateAndAddWidgetToViewport();
 
+	//After clients have done things with their cards
 	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
-	void ClientChoseCard(FString ChosenCardName); 
+	void ClientChoseCard(FString ClientChoseCard, FString ClientID); 
+
+	//Server RPC function
+	UFUNCTION(Server, Reliable)
+	void ServerClientChoseCard(const FString& ChosenCardName, const FString& ClientID);
+
+	//Actual logic for the Server RPC
+	void ServerClientChoseCard_Implementation(const FString& ChosenCardName, const FString& ClientID);
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 };

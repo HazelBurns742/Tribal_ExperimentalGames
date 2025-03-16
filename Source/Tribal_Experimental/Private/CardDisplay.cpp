@@ -9,6 +9,7 @@
 #include "CardData.h"
 #include "TurnManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/GameInstance.h"
 
 UCardDisplay::UCardDisplay(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -60,8 +61,9 @@ UCardWidget* UCardDisplay::CreateCardWidget(const FCardDataToReplicate& CardData
 }
 
 
-void UCardDisplay::UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfCards)
+void UCardDisplay::UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfCards, FString ClientID)
 {
+    DislayClientIDRef = ClientID; 
     if (CardContainer)
     {
         CardContainer->ClearChildren();
@@ -97,20 +99,25 @@ void UCardDisplay::OnConfirmClicked()
         UE_LOG(LogTemp, Warning, TEXT("Card selected, do logic?"));
         RemoveCardFromDisplay(LastClickedCard);
 
-        //Find turn manager in scene
-        AActor* FoundTurnManager = UGameplayStatics::GetActorOfClass(GetWorld(), ATurnManager::StaticClass());
-        ATurnManager* TurnManager = Cast<ATurnManager>(FoundTurnManager);
+        ATurnManager* TurnManager = nullptr;
+        TArray<AActor*> FoundActors;
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATurnManager::StaticClass(), FoundActors);
+
+        if (FoundActors.Num() > 0)
+        {
+            TurnManager = Cast<ATurnManager>(FoundActors[0]);
+        }
 
         if (TurnManager) {
             //Pass card name to turn manager
             UTextBlock* NameToPass = LastClickedCard->CardNameText;
             FText NameToPassText = NameToPass->GetText();
             UE_LOG(LogTemp, Warning, TEXT("Passing card name to turn manager"));
-            TurnManager->ClientChoseCard(NameToPassText.ToString());
+
+            TurnManager->ClientChoseCard(NameToPassText.ToString(), DislayClientIDRef);
+            TurnManager->ServerClientChoseCard(NameToPassText.ToString(), DislayClientIDRef);
         }
-        else {
-            UE_LOG(LogTemp, Error, TEXT("CANT FIND TURN MANAGER IN SCENE TO PASS CHOSEN CARD NAME"));
-        }
+
         //Hide menu (Unset visbility)
         SetVisibility(ESlateVisibility::Hidden);
         APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
