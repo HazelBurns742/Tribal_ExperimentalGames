@@ -30,7 +30,7 @@ void ATurnManager::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("TURN MANAGER WAS SPAWNED!"));
-	CardManager = Cast<ACardManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACardManager::StaticClass()));
+	CardManager = GetWorld()->SpawnActor<ACardManager>(ACardManager::StaticClass());
 }
 
 // Called every frame
