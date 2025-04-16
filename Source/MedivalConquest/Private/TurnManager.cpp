@@ -6,7 +6,6 @@
 #include "CardManager.h"
 #include "CardDisplay.h"
 #include "Kismet/GameplayStatics.h"
-#include "Net/UnrealNetwork.h"
 #include "Blueprint/UserWidget.h" 
 
 
@@ -16,14 +15,11 @@
 ATurnManager::ATurnManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	bReplicates = true;
-	bAlwaysRelevant = true;
 
-	//if (!RootComponent)
-	//{
-	//	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-	//	RootComp = RootComponent;
-	//}
+	currentTurn = 0; 
+	amountOfPlayers; 
+	currentPlayer; 
+
 }
 
 // Called when the game starts or when spawned
@@ -32,6 +28,19 @@ void ATurnManager::BeginPlay()
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("TURN MANAGER WAS SPAWNED!"));
 	CardManager = GetWorld()->SpawnActor<ACardManager>(ACardManager::StaticClass());
+
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC && CardDisplayClass)
+	{
+		CachedCardDisplay = CreateWidget<UCardDisplay>(PC, CardDisplayClass);
+		if (CachedCardDisplay)
+		{
+			CachedCardDisplay->AddToViewport();
+			PC->bShowMouseCursor = true;
+			PC->SetInputMode(FInputModeUIOnly());
+			UE_LOG(LogTemp, Display, TEXT("CardDisplay Widget added to viewport"));
+		}
+	}
 }
 
 // Called every frame
@@ -41,51 +50,24 @@ void ATurnManager::Tick(float DeltaTime)
 
 }
 
-void ATurnManager::CreateAndAddWidgetToViewport(APlayerController* PlayerController) {
-
-	if (PlayerController) {
-		CachedCardDisplay = CreateWidget<UCardDisplay>(PlayerController, CardDisplayClass);
-		if (CachedCardDisplay)
-		{
-			CachedCardDisplay->AddToViewport();
-			PlayerController->bShowMouseCursor = true;
-			FInputModeUIOnly InputMode;
-			PlayerController->SetInputMode(InputMode);
-
-			UE_LOG(LogTemp, Display, TEXT("CardDisplay Widget added to player viewport"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to create CardDisplay widget"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid player controller"));
-	}
-}
-
-
-void ATurnManager::AddClientToSession()
+void ATurnManager::AddPlayer()
 {
-	if (HasAuthority())
-	{
+	for (int32 i = 0; i < amountOfPlayers; ++i) {
+
 		FClientData NewClient;
-		NewClient.ClientID = FString(TEXT("Player")) + FString::FromInt(ClientNum);
-		UE_LOG(LogTemp, Display, TEXT("Number of clients: %d"), ClientNum);
+		NewClient.ClientID = FString(TEXT("Player")) + FString::FromInt(i+1);
 
 		UE_LOG(LogTemp, Display, TEXT("Added client %s"), *NewClient.ClientID);
 		NewClient.ActionPoints = 5;
 
 		if (CardManager != nullptr) {
 			//Shuffle original deck
-			TArray<FCardDataToReplicate> ClientDeck = CardManager->ReplicatedCardDataList;
-			ShuffleMyDeck(ClientDeck);
-			MyCardDeckPointer = 0;
+			TArray<FCardDataToReplicate> Deck = CardManager->ReplicatedCardDataList;
+			ShuffleMyDeck(Deck);
 
 			//Set shuffled deck to my deck
-			NewClient.MyCardDeck = ClientDeck;
-			SetClientHand(NewClient);
+			NewClient.MyCardDeck = Deck;
+			SetPlayerHand(NewClient);
 			Clients.Add(NewClient);
 
 			UE_LOG(LogTemp, Warning, TEXT("Added Client: %s to Client array"), *NewClient.ClientID);
@@ -95,6 +77,9 @@ void ATurnManager::AddClientToSession()
 			UE_LOG(LogTemp, Error, TEXT("Card Manger was null, DIDNT CALL SHUFFLE OR SET HAND"));
 		}
 	}
+
+	currentPlayer = 0;
+	StartTurn();
 }
 
 void ATurnManager::ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle) {
@@ -104,9 +89,10 @@ void ATurnManager::ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle) {
 		DeckToShuffle.Swap(i, RandomIndex);
 	}
 	MyCardDeck = DeckToShuffle;
+	MyCardDeckPointer = 0;
 }
 
-void ATurnManager::SetClientHand(FClientData& Client) {
+void ATurnManager::SetPlayerHand(FClientData& Client) {
 	if (Client.MyCardDeck.Num() <= 1) {
 		UE_LOG(LogTemp, Error, TEXT("My Card Deck is empty"));
 		return;
@@ -137,102 +123,67 @@ void ATurnManager::SetClientHand(FClientData& Client) {
 		}
 		UE_LOG(LogTemp, Display, TEXT("Hand now full"));
 	}
+}
+
+void ATurnManager::StartTurn() {
+	if (!Clients.IsValidIndex(currentPlayer)) return; 
+
+	FClientData& CurrentClient = Clients[currentPlayer];
+	CurrentClient.ActionPoints = 5;
 
 	if (CachedCardDisplay) {
 		CachedCardDisplay->SetCardDisplayVisible();
-		CachedCardDisplay->UpdateCardDisplay(Client.HandOfCards, Client.ClientID);
-		UE_LOG(LogTemp, Display, TEXT("CardDisplay updated for client %d"), ClientNum);
+		CachedCardDisplay->UpdateCardDisplay(CurrentClient.HandOfCards, CurrentClient.ClientID);
+		UE_LOG(LogTemp, Display, TEXT("CardDisplay updated for %s"), *CurrentClient.ClientID);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CardDisplay BP is null"));
 	}
 
-
-	////if (PlayerHandSize > DefaultHandSize) {
-	//// UE_LOG(LogTemp, Display, TEXT("Too many cards in hand"));
-	//// 
-	////	int32 NumCardsToDiscard = PlayerHandSize - DefaultHandSize; 
-	////	for (int32 i = 0; i < NumCardsToDiscard; i++) {
-	////		bool toldToDiscard = false;
-	////		if (!toldToDiscard) {
-	////			//Tell player to discard
-	////			toldToDiscard = true;
-	////		}
-
-	////	}
-	////}
+	UE_LOG(LogTemp, Warning, TEXT("Turn started for %s"), *CurrentClient.ClientID);
 }
 
-void ATurnManager::ClientChoseCard(FString ChosenCardName, FString ClientID) {
+void ATurnManager::EndTurn() {
+	currentPlayer = (currentPlayer + 1) % amountOfPlayers;
+	StartTurn();
+}
+
+void ATurnManager::PlayerChoseCard(FString ChosenCardName) {
 
 	UE_LOG(LogTemp, Warning, TEXT("Turn manager recieved chosen card name: %s"), *ChosenCardName);
-	UE_LOG(LogTemp, Warning, TEXT("Client ID recieved: %s"), *ClientID);
-	UE_LOG(LogTemp, Warning, TEXT("Num of clients to loop through: %d"), Clients.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("Client ID recieved: %s"), *ClientID);
+	//UE_LOG(LogTemp, Warning, TEXT("Num of clients to loop through: %d"), Clients.Num());
 
-	for (FClientData& Client : Clients) {
-		UE_LOG(LogTemp, Warning, TEXT("Looping through %d clients"), Clients.Num());
-		UE_LOG(LogTemp, Warning, TEXT("Comparing Client ID: %s with Passed Client ID: %s"), *Client.ClientID, *ClientID);
-		if (Client.ClientID == ClientID) {
-			UE_LOG(LogTemp, Warning, TEXT("Client ID matched"));
+	if (!Clients.IsValidIndex(currentPlayer)) return;
 
-			for (FCardDataToReplicate& Card : Client.HandOfCards) {
-				if (Card.Name == ChosenCardName) {
-					Client.ActionPoints -= Card.Points;
-					//Place cards
+	FClientData& CurrentClient = Clients[currentPlayer];
 
-					//Client.HandOfCards.RemoveSingle(Card);
-					UE_LOG(LogTemp, Display, TEXT("Client: %s! Card %s used! Remaining Actions: %d"), *ClientID, *Card.Name, Client.ActionPoints);
-					break;
-				}
+	for (int32 i = 0; i < CurrentClient.HandOfCards.Num(); ++i)
+	{
+		if (CurrentClient.HandOfCards[i].Name == ChosenCardName)
+		{
+			CurrentClient.ActionPoints -= CurrentClient.HandOfCards[i].Points;
+
+			// TODO: Trigger card effect
+
+			CurrentClient.HandOfCards.RemoveAt(i);
+			SetPlayerHand(CurrentClient);
+
+			if (CachedCardDisplay)
+			{
+				CachedCardDisplay->UpdateCardDisplay(CurrentClient.HandOfCards, CurrentClient.ClientID);
 			}
+
+			UE_LOG(LogTemp, Display, TEXT("%s used card %s. Remaining AP: %d"),
+				*CurrentClient.ClientID, *ChosenCardName, CurrentClient.ActionPoints);
+
 			break;
 		}
 	}
 
-
-	//Get array of all clients
-	//Find client with id = clientid 
-	//Then do for
-
-	//For every card in hand of cards, 
-	// If handofcards card.name = CardWidget.name 
-	//	actionpoints - card.points;
-	//	place card? //Need to call tile logic first? 
-	//	Remove card from hand of cards
-}
-
-void ATurnManager::ServerClientChoseCard_Implementation(const FString& ChosenCardName, const FString& ClientID) {
-
-	UE_LOG(LogTemp, Warning, TEXT("Turn manager recieved chosen card name: %s"), *ChosenCardName);
-	UE_LOG(LogTemp, Warning, TEXT("Client ID recieved: %s"), *ClientID);
-	UE_LOG(LogTemp, Warning, TEXT("Num of clients to loop through: %d"), Clients.Num());
-
-	for (FClientData& Client : Clients) {
-		UE_LOG(LogTemp, Warning, TEXT("Looping through %d clients"), Clients.Num());
-		UE_LOG(LogTemp, Warning, TEXT("Comparing Client ID: %s with Passed Client ID: %s"), *Client.ClientID, *ClientID);
-		if (Client.ClientID == ClientID) {
-			UE_LOG(LogTemp, Warning, TEXT("Client ID matched"));
-
-			for (FCardDataToReplicate& Card : Client.HandOfCards) {
-				if (Card.Name == ChosenCardName) {
-					Client.ActionPoints -= Card.Points;
-					//Place cards
-
-					//Client.HandOfCards.RemoveSingle(Card);
-					UE_LOG(LogTemp, Display, TEXT("Client: %s! Card %s used! Remaining Actions: %d"), *ClientID, *Card.Name, Client.ActionPoints);
-					break;
-				}
-			}
-			break;
-		}
+	if (CurrentClient.ActionPoints <= 0)
+	{
+		EndTurn();
 	}
-}
-
-void ATurnManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	// Replicate the Clients array to all clients
-	DOREPLIFETIME(ATurnManager, Clients);
 }

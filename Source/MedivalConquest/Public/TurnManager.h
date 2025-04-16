@@ -55,45 +55,64 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(Replicated)
-	TArray<FClientData> Clients;
+	//Add a new local player (max 4 suggested) 
+	UFUNCTION(BlueprintCallable)
+	void AddPlayer();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Management")
-	ACardManager* CardManager;
+	// Start the current players turn 
+	UFUNCTION(BlueprintCallable)
+	void StartTurn();
 
+	// End the current players turn and move to the next 
+	UFUNCTION(BlueprintCallable)
+	void EndTurn();
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TurnManager")
-	int32 ClientNum;
+	//Called when a player chooses a card 
+	UFUNCTION(BlueprintCallable)
+	void PlayerChoseCard(FString ChosenCardName);
 
-	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
-	void AddClientToSession();
-
-
-	void SetClientHand(FClientData& Client);
-
+	// Shuffle a deck and store in manager memory 
+	UFUNCTION(BlueprintCallable)
 	void ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle);
 
-	//Viewports and display
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Turn Manager")
-	UCardDisplay* CachedCardDisplay;
+	// Draw cards and fill player hand 
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerHand(FClientData& Client);
 
+	// Total number of players, set in Blueprint before calling 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn Manager|Settings")
+	int32 amountOfPlayers = 2;
+
+	//Current player (player's turn)
+	UPROPERTY(BlueprintReadWrite, Category = "Turn Manager|State")
+	int32 currentPlayer = 0;
+
+protected:
+	/** Shared card manager used to distribute decks */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn Manager")
+	ACardManager* CardManager;
+
+	/** The UI widget used to display cards */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn Manager")
 	TSubclassOf<UCardDisplay> CardDisplayClass;
 
-	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
-	void CreateAndAddWidgetToViewport(APlayerController* PlayerController);
+	/** Active UI display widget instance */
+	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager")
+	UCardDisplay* CachedCardDisplay;
 
-	//After clients have done things with their cards
-	UFUNCTION(BlueprintCallable, Category = "Turn Manager")
-	void ClientChoseCard(FString ClientChoseCard, FString ClientID);
+	/** All players (turn-based, local) */
+	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager")
+	TArray<FClientData> Clients;
 
-	//Server RPC function
-	UFUNCTION(Server, Reliable)
-	void ServerClientChoseCard(const FString& ChosenCardName, const FString& ClientID);
+	/** Whose turn is it? Index in Clients[] */
+	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager")
+	int32 currentTurn;
 
-	//Actual logic for the Server RPC
-	void ServerClientChoseCard_Implementation(const FString& ChosenCardName, const FString& ClientID);
+	/** Shared deck (shuffled once per game) */
+	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager|Deck")
+	TArray<FCardDataToReplicate> MyCardDeck;
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
+	/** Pointer for drawing from deck */
+	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager|Deck")
+	int32 MyCardDeckPointer;
 };
