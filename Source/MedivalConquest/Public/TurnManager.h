@@ -43,10 +43,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-private:
-	TArray<FCardDataToReplicate> MyCardDeck;
-	int32 MyCardDeckPointer;
-
 public:
 	bool bHasSpawnedTurnManager = false;
 
@@ -88,31 +84,31 @@ public:
 	int32 currentPlayer = 0;
 
 protected:
-	/** Shared card manager used to distribute decks */
+	//Shared card manager used to distribute decks 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn Manager")
 	ACardManager* CardManager;
 
-	/** The UI widget used to display cards */
+	// The UI widget used to display cards 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn Manager")
 	TSubclassOf<UCardDisplay> CardDisplayClass;
 
-	/** Active UI display widget instance */
+	// Active UI display widget instance 
 	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager")
 	UCardDisplay* CachedCardDisplay;
 
-	/** All players (turn-based, local) */
+	// All players (turn-based, local) 
 	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager")
 	TArray<FClientData> Clients;
 
-	/** Whose turn is it? Index in Clients[] */
+	// Whose turn is it? Index in Clients[] 
 	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager")
 	int32 currentTurn;
 
-	/** Shared deck (shuffled once per game) */
+	// Shared deck (shuffled once per game) 
 	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager|Deck")
 	TArray<FCardDataToReplicate> MyCardDeck;
 
-	/** Pointer for drawing from deck */
+	// Pointer for drawing from deck 
 	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager|Deck")
 	int32 MyCardDeckPointer;
 };

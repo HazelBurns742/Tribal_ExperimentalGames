@@ -114,8 +114,7 @@ void UCardDisplay::OnConfirmClicked()
             FText NameToPassText = NameToPass->GetText();
             UE_LOG(LogTemp, Warning, TEXT("Passing card name to turn manager"));
 
-            TurnManager->ClientChoseCard(NameToPassText.ToString(), DislayClientIDRef);
-            TurnManager->ServerClientChoseCard(NameToPassText.ToString(), DislayClientIDRef);
+            TurnManager->PlayerChoseCard(NameToPassText.ToString());
         }
 
         //Hide menu (Unset visbility)
