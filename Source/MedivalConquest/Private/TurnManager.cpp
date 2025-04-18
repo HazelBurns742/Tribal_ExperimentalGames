@@ -142,6 +142,8 @@ void ATurnManager::StartTurn() {
 	CurrentClient.ActionPoints = 5;
 
 	if (CachedCardDisplay) {
+		FString Arguments = FString::Printf(TEXT("UpdatePlayerAP %d"), CurrentClient.ActionPoints);
+		CachedCardDisplay->CallFunctionByNameWithArguments(*Arguments, *GLog, nullptr, true);
 		CachedCardDisplay->UpdateCardDisplay(CurrentClient.HandOfCards, CurrentClient.ClientID);
 		CachedCardDisplay->SetCardDisplayVisible();
 		UE_LOG(LogTemp, Display, TEXT("CardDisplay updated for %s"), *CurrentClient.ClientID);
@@ -154,7 +156,14 @@ void ATurnManager::StartTurn() {
 }
 
 void ATurnManager::EndTurn() {
-	currentPlayer = (currentPlayer + 1) % amountOfPlayers;
+	currentPlayer++; 
+	if (currentPlayer > amountOfPlayers - 1) {
+		currentPlayer = 0; 
+	}
+
+	FString Arguments = FString::Printf(TEXT("UpdatePlayerText %d"), currentPlayer + 1);
+	CachedCardDisplay->CallFunctionByNameWithArguments(*Arguments, *GLog, nullptr, true);
+
 	StartTurn();
 }
 
@@ -169,12 +178,15 @@ void ATurnManager::PlayerChoseCard(FString ChosenCardName) {
 	for (int32 i = 0; i < CurrentClient.HandOfCards.Num(); ++i) {
 		if (CurrentClient.HandOfCards[i].Name == ChosenCardName) {
 			CurrentClient.ActionPoints -= CurrentClient.HandOfCards[i].Points;
-
+		
 			// TODO: Trigger card effect
 
 			CurrentClient.HandOfCards.RemoveAt(i);
 
 			if (CachedCardDisplay){
+				//Tell client what their remaning APs are
+				FString Arguments = FString::Printf(TEXT("UpdatePlayerAP %d"), CurrentClient.ActionPoints);
+				CachedCardDisplay->CallFunctionByNameWithArguments(*Arguments, *GLog, nullptr, true);
 				CachedCardDisplay->UpdateCardDisplay(CurrentClient.HandOfCards, CurrentClient.ClientID);
 			}
 
