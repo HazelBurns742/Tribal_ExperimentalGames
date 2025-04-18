@@ -30,11 +30,9 @@ void ATurnManager::BeginPlay()
 	CardManager = GetWorld()->SpawnActor<ACardManager>(ACardManager::StaticClass());
 
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC && CardDisplayClass)
-	{
+	if (PC && CardDisplayClass) {
 		CachedCardDisplay = CreateWidget<UCardDisplay>(PC, CardDisplayClass);
-		if (CachedCardDisplay)
-		{
+		if (CachedCardDisplay) {
 			CachedCardDisplay->AddToViewport();
 			PC->bShowMouseCursor = true;
 			PC->SetInputMode(FInputModeUIOnly());
@@ -81,6 +79,7 @@ void ATurnManager::AddPlayer()
 			UE_LOG(LogTemp, Warning, TEXT("Num of clients in array: %d"), Clients.Num());
 
 		}
+
 		else {
 			UE_LOG(LogTemp, Error, TEXT("Card Manger was null, DIDNT CALL SHUFFLE OR SET HAND"));
 		}
@@ -143,12 +142,11 @@ void ATurnManager::StartTurn() {
 	CurrentClient.ActionPoints = 5;
 
 	if (CachedCardDisplay) {
-		CachedCardDisplay->SetCardDisplayVisible();
 		CachedCardDisplay->UpdateCardDisplay(CurrentClient.HandOfCards, CurrentClient.ClientID);
+		CachedCardDisplay->SetCardDisplayVisible();
 		UE_LOG(LogTemp, Display, TEXT("CardDisplay updated for %s"), *CurrentClient.ClientID);
 	}
-	else
-	{
+	else {
 		UE_LOG(LogTemp, Warning, TEXT("CardDisplay BP is null"));
 	}
 
@@ -166,23 +164,17 @@ void ATurnManager::PlayerChoseCard(FString ChosenCardName) {
 	//UE_LOG(LogTemp, Warning, TEXT("Client ID recieved: %s"), *ClientID);
 	//UE_LOG(LogTemp, Warning, TEXT("Num of clients to loop through: %d"), Clients.Num());
 
-	if (!Clients.IsValidIndex(currentPlayer)) return;
-
 	FClientData& CurrentClient = Clients[currentPlayer];
 
-	for (int32 i = 0; i < CurrentClient.HandOfCards.Num(); ++i)
-	{
-		if (CurrentClient.HandOfCards[i].Name == ChosenCardName)
-		{
+	for (int32 i = 0; i < CurrentClient.HandOfCards.Num(); ++i) {
+		if (CurrentClient.HandOfCards[i].Name == ChosenCardName) {
 			CurrentClient.ActionPoints -= CurrentClient.HandOfCards[i].Points;
 
 			// TODO: Trigger card effect
 
 			CurrentClient.HandOfCards.RemoveAt(i);
-			SetPlayerHand(CurrentClient);
 
-			if (CachedCardDisplay)
-			{
+			if (CachedCardDisplay){
 				CachedCardDisplay->UpdateCardDisplay(CurrentClient.HandOfCards, CurrentClient.ClientID);
 			}
 
@@ -193,8 +185,25 @@ void ATurnManager::PlayerChoseCard(FString ChosenCardName) {
 		}
 	}
 
-	if (CurrentClient.ActionPoints <= 0)
-	{
+	if (CurrentClient.ActionPoints <= 0) {
+		SetPlayerHand(CurrentClient);
 		EndTurn();
+	}
+}
+
+void ATurnManager::UpdatePlayerUI() {
+
+	FClientData& CurrentClient = Clients[currentPlayer];
+
+	// Update the card display with the new hand
+	if (CachedCardDisplay) {
+		CachedCardDisplay->UpdateCardDisplay(CurrentClient.HandOfCards, CurrentClient.ClientID);
+		CachedCardDisplay->SetCardDisplayVisible();
+		UE_LOG(LogTemp, Display, TEXT("UI updated after removing card"));
+	}
+
+
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("CardDisplay BP is null, UI update failed"));
 	}
 }

@@ -67,6 +67,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayerChoseCard(FString ChosenCardName);
 
+	UFUNCTION(BlueprintCallable)
+	void UpdatePlayerUI();
+
 	// Shuffle a deck and store in manager memory 
 	UFUNCTION(BlueprintCallable)
 	void ShuffleMyDeck(TArray<FCardDataToReplicate>& DeckToShuffle);
