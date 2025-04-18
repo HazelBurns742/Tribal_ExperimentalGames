@@ -69,7 +69,7 @@ public:
 
 	// Shuffle a deck and store in manager memory 
 	UFUNCTION(BlueprintCallable)
-	void ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle);
+	void ShuffleMyDeck(TArray<FCardDataToReplicate>& DeckToShuffle);
 
 	// Draw cards and fill player hand 
 	UFUNCTION(BlueprintCallable)

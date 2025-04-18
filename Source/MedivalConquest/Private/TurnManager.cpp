@@ -63,15 +63,23 @@ void ATurnManager::AddPlayer()
 		if (CardManager != nullptr) {
 			//Shuffle original deck
 			TArray<FCardDataToReplicate> Deck = CardManager->ReplicatedCardDataList;
+
+			//Use random seed for each player (Different ones)
+			FMath::RandInit(FDateTime::Now().GetTicks() + i);
+
 			ShuffleMyDeck(Deck);
+			MyCardDeckPointer = 0;
 
 			//Set shuffled deck to my deck
 			NewClient.MyCardDeck = Deck;
+			UE_LOG(LogTemp, Display, TEXT("Deck assigned to %s:"), *NewClient.ClientID);
+
 			SetPlayerHand(NewClient);
 			Clients.Add(NewClient);
 
 			UE_LOG(LogTemp, Warning, TEXT("Added Client: %s to Client array"), *NewClient.ClientID);
 			UE_LOG(LogTemp, Warning, TEXT("Num of clients in array: %d"), Clients.Num());
+
 		}
 		else {
 			UE_LOG(LogTemp, Error, TEXT("Card Manger was null, DIDNT CALL SHUFFLE OR SET HAND"));
@@ -82,14 +90,13 @@ void ATurnManager::AddPlayer()
 	StartTurn();
 }
 
-void ATurnManager::ShuffleMyDeck(TArray<FCardDataToReplicate> DeckToShuffle) {
+void ATurnManager::ShuffleMyDeck(TArray<FCardDataToReplicate>& DeckToShuffle) {
 	int32 NumCardsInDeck = DeckToShuffle.Num();
 	for (int32 i = 0; i < NumCardsInDeck - 1; i++) {
 		int32 RandomIndex = FMath::RandRange(i, NumCardsInDeck - 1);
 		DeckToShuffle.Swap(i, RandomIndex);
 	}
 	MyCardDeck = DeckToShuffle;
-	MyCardDeckPointer = 0;
 }
 
 void ATurnManager::SetPlayerHand(FClientData& Client) {
