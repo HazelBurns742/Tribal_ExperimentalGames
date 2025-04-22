@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "CardData.h"
 #include "CardManager.h" 
+#include "TileData.h" 
 #include "TurnManager.generated.h"
 
 class UCardDisplay;
@@ -85,6 +86,9 @@ public:
 	//Current player (player's turn)
 	UPROPERTY(BlueprintReadWrite, Category = "Turn Manager|State")
 	int32 currentPlayer = 0;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TMap<int32, FTileData> TileMap;
 
 protected:
 	//Shared card manager used to distribute decks 
