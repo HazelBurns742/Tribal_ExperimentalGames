@@ -88,7 +88,7 @@ public:
 	int32 currentPlayer = 0;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TMap<int32, FTileData> TileMap;
+	TMap<FString, UTileData*> TileMap;
 
 protected:
 	//Shared card manager used to distribute decks 

@@ -6,22 +6,22 @@
 #include "TileData.generated.h"
 
 
-USTRUCT(BlueprintType)
-struct FTileData {
+UCLASS(BlueprintType) 
+class MEDIVALCONQUEST_API UTileData : public UObject
+{ 
 	GENERATED_BODY()
 
+public: 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 TileID; 
+	FString TileID; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 HexID;
+	FString HexID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 PlayerID;
+	FString PlayerID;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AActor* SpawnedModel;
 };
