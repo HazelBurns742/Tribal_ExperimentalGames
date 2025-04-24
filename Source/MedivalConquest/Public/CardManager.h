@@ -26,6 +26,7 @@ public:
 
 	void LoadCardData(const FString& FilePath); //Func loads card data from JSON
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<UCardData*> CardDataList; //Array holds all loaded card data
 
 	UPROPERTY(Replicated)

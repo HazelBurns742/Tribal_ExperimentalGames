@@ -159,13 +159,22 @@ void ATurnManager::EndTurn() {
 	currentPlayer++; 
 	if (currentPlayer > amountOfPlayers - 1) {
 		currentPlayer = 0; 
+		TurnNum++; 
+		UE_LOG(LogTemp, Warning, TEXT("Current Turn Num %d"), TurnNum);
 	}
 
 	FString Arguments = FString::Printf(TEXT("UpdatePlayerText %d"), currentPlayer + 1);
 	CachedCardDisplay->CallFunctionByNameWithArguments(*Arguments, *GLog, nullptr, true);
 
 	TurnEnded = false;
-	StartTurn();
+
+	if (TurnNum <= 15) {
+		StartTurn();
+	}
+
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Turn over"));
+	}
 }
 
 void ATurnManager::PlayerChoseCard(FString ChosenCardName) {

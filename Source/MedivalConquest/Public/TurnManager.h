@@ -120,4 +120,7 @@ protected:
 	// Pointer for drawing from deck 
 	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager|Deck")
 	int32 MyCardDeckPointer;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager|Deck")
+	int32 TurnNum = 0;
 };
