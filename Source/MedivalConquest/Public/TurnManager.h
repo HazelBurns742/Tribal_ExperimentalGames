@@ -90,6 +90,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TMap<FString, UTileData*> TileMap;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool TurnEnded = false;
 protected:
 	//Shared card manager used to distribute decks 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn Manager")

@@ -164,6 +164,7 @@ void ATurnManager::EndTurn() {
 	FString Arguments = FString::Printf(TEXT("UpdatePlayerText %d"), currentPlayer + 1);
 	CachedCardDisplay->CallFunctionByNameWithArguments(*Arguments, *GLog, nullptr, true);
 
+	TurnEnded = false;
 	StartTurn();
 }
 
@@ -199,7 +200,7 @@ void ATurnManager::PlayerChoseCard(FString ChosenCardName) {
 
 	if (CurrentClient.ActionPoints <= 0) {
 		SetPlayerHand(CurrentClient);
-		EndTurn();
+		TurnEnded = true;
 	}
 }
 
