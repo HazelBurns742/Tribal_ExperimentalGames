@@ -22,6 +22,9 @@ public:
 	int32 Health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Combat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString PlayerID;
 
 };
