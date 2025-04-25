@@ -158,6 +158,8 @@ void ATurnManager::StartTurn() {
 void ATurnManager::EndTurn() {
 	currentPlayer++; 
 	if (currentPlayer > amountOfPlayers - 1) {
+		UpdateGold(TileMap, Clients);
+		UE_LOG(LogTemp, Error, TEXT("CALLED UPDATE GOLD"));
 		currentPlayer = 0; 
 		TurnNum++; 
 		UE_LOG(LogTemp, Warning, TEXT("Current Turn Num %d"), TurnNum);
@@ -169,6 +171,7 @@ void ATurnManager::EndTurn() {
 	TurnEnded = false;
 
 	if (TurnNum <= 15) {
+		//check owned tiles & add players gold to their score
 		StartTurn();
 	}
 
@@ -227,5 +230,29 @@ void ATurnManager::UpdatePlayerUI() {
 
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("CardDisplay BP is null, UI update failed"));
+	}
+}
+
+void ATurnManager::UpdateGold(const TMap<FString, UTileData*>& InTileMap, TArray<FClientData>& InClients) {
+	TMap<FString, int32> TileCounts;
+	for (const TPair<FString, UTileData*>& Entry : TileMap) {
+		UTileData* Tile = Entry.Value;
+		if (Tile && !Tile->PlayerID.IsEmpty()) {
+			//Player ID  0 - 3, Client ID 1 - 4, so adjusting to match
+			int32 PlayerIndex = FCString::Atoi(*Tile->PlayerID.RightChop(6));
+			FString AdjustedClientID = "player" + FString::FromInt(PlayerIndex + 1);
+
+			TileCounts.FindOrAdd(AdjustedClientID)++;
+
+			UE_LOG(LogTemp, Warning, TEXT("Tile belongs to AdjustedClientID: %s"), *AdjustedClientID);
+		}
+	}
+
+	for (FClientData& Client : Clients) {
+		UE_LOG(LogTemp, Warning, TEXT("Checking client: %s"), *Client.ClientID);
+		if (int32* Count = TileCounts.Find(Client.ClientID)) {
+			Client.Gold += *Count; // Add 1 gold per tile they own
+			UE_LOG(LogTemp, Warning, TEXT("ClientGold: %s : %d"), *Client.ClientID, Client.Gold);
+		}
 	}
 }

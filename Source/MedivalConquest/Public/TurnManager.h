@@ -29,6 +29,9 @@ struct FClientData
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data")
 	int32 ActionPoints;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Client Data")
+	int32 Gold = 0;
 };
 
 UCLASS(Blueprintable)
@@ -70,6 +73,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdatePlayerUI();
+
+	void UpdateGold(const TMap<FString, UTileData*>& InTileMap, TArray<FClientData>& InClients);
 
 	// Shuffle a deck and store in manager memory 
 	UFUNCTION(BlueprintCallable)
@@ -123,4 +128,5 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager|Deck")
 	int32 TurnNum = 0;
+
 };
