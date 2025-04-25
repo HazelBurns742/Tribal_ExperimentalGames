@@ -184,6 +184,7 @@ void ATurnManager::EndTurn() {
 			}
 		}
 	}
+
 }
 
 void ATurnManager::PlayerChoseCard(FString ChosenCardName) {
@@ -240,7 +241,7 @@ void ATurnManager::UpdatePlayerUI() {
 }
 
 void ATurnManager::UpdateGold(const TMap<FString, UTileData*>& InTileMap, TArray<FClientData>& InClients) {
-	TMap<FString, int32> TileCounts;
+	TMap<FString, TMap<FString, int32>> PlayerHexCounts;
 	for (const TPair<FString, UTileData*>& Entry : TileMap) {
 		UTileData* Tile = Entry.Value;
 		if (Tile && !Tile->PlayerID.IsEmpty()) {
@@ -248,7 +249,7 @@ void ATurnManager::UpdateGold(const TMap<FString, UTileData*>& InTileMap, TArray
 			int32 PlayerIndex = FCString::Atoi(*Tile->PlayerID.RightChop(6));
 			FString AdjustedClientID = "Player" + FString::FromInt(PlayerIndex + 1);
 
-			TileCounts.FindOrAdd(AdjustedClientID)++;
+			PlayerHexCounts.FindOrAdd(AdjustedClientID).FindOrAdd(Tile->HexID)++;
 
 			UE_LOG(LogTemp, Warning, TEXT("Tile belongs to AdjustedClientID: %s"), *AdjustedClientID);
 		}
@@ -256,9 +257,23 @@ void ATurnManager::UpdateGold(const TMap<FString, UTileData*>& InTileMap, TArray
 
 	for (FClientData& Client : Clients) {
 		UE_LOG(LogTemp, Warning, TEXT("Checking client: %s"), *Client.ClientID);
-		if (int32* Count = TileCounts.Find(Client.ClientID)) {
-			Client.Gold += *Count; // Add 1 gold per tile they own
-			UE_LOG(LogTemp, Warning, TEXT("ClientGold: %s : %d"), *Client.ClientID, Client.Gold);
+
+		if (TMap<FString, int32>* HexCounts = PlayerHexCounts.Find(Client.ClientID)) {
+			for (const TPair<FString, int32>& HexEntry : *HexCounts) {
+				int32 TileCountInHex = HexEntry.Value;
+				if (TileCountInHex >= 3) {
+					Client.Gold += 5;
+					UE_LOG(LogTemp, Warning, TEXT("Client %s has %d tiles in Hex %s -> +5 gold"), *Client.ClientID, TileCountInHex, *HexEntry.Key);
+				}
+
+				else {
+					Client.Gold += 1;
+					UE_LOG(LogTemp, Warning, TEXT("Client %s has %d tiles in Hex %s -> +1 gold"), *Client.ClientID, TileCountInHex, *HexEntry.Key);
+				}
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("Total Gold for %s: %d"), *Client.ClientID, Client.Gold);
 		}
+
 	}
 }
