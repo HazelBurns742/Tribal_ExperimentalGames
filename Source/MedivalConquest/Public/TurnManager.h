@@ -129,4 +129,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Turn Manager|Deck")
 	int32 TurnNum = 0;
 
+	UPROPERTY(BlueprintReadOnly)
+	int32 HighestGold = 0;
+
+
+	UPROPERTY(BlueprintReadOnly)
+	FString WinningPlayer;
 };

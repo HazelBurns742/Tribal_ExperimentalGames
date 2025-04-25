@@ -175,8 +175,14 @@ void ATurnManager::EndTurn() {
 		StartTurn();
 	}
 
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Turn over"));
+	else if (TurnNum > 15) { //I know i could probably use an else, might change later
+		UE_LOG(LogTemp, Warning, TEXT("Turns over"));
+		for (FClientData& Client : Clients) {
+			if (Client.Gold > HighestGold) {
+				HighestGold = Client.Gold; 
+				WinningPlayer = Client.ClientID;
+			}
+		}
 	}
 }
 
@@ -240,7 +246,7 @@ void ATurnManager::UpdateGold(const TMap<FString, UTileData*>& InTileMap, TArray
 		if (Tile && !Tile->PlayerID.IsEmpty()) {
 			//Player ID  0 - 3, Client ID 1 - 4, so adjusting to match
 			int32 PlayerIndex = FCString::Atoi(*Tile->PlayerID.RightChop(6));
-			FString AdjustedClientID = "player" + FString::FromInt(PlayerIndex + 1);
+			FString AdjustedClientID = "Player" + FString::FromInt(PlayerIndex + 1);
 
 			TileCounts.FindOrAdd(AdjustedClientID)++;
 
