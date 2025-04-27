@@ -183,6 +183,8 @@ void ATurnManager::EndTurn() {
 				WinningPlayer = Client.ClientID;
 			}
 		}
+
+		GameOver = true;
 	}
 
 }

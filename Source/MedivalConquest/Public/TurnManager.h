@@ -97,6 +97,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool TurnEnded = false;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool GameOver = false;
 protected:
 	//Shared card manager used to distribute decks 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turn Manager")
