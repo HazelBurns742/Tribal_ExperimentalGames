@@ -32,6 +32,8 @@ public:
     UPROPERTY(meta = (BindWidget))
     UTextBlock* CardNameText;
 
+
+    UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Card Data")
     FString CardName;
     int32 CardPoints;
 
