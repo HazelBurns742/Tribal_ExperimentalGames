@@ -41,6 +41,8 @@ void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Heal
     {
         CardCombatText->SetText(FText::FromString(FString::Printf(TEXT("CP : %d"), CardCombat)));
     }
+
+    OnCardVariablesSet();
 }
 
 void UCardWidget::OnCardClicked() {
