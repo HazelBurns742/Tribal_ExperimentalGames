@@ -10,20 +10,20 @@ void UCardWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    SetCardVariables(CardName, CardPoints, CardHealth, CardCombat);
+    SetCardVariables(CardName, CardPoints, CardHealth, CardCombat, CardImagePath);
 
     if (CardButton) {
         CardButton->OnClicked.AddDynamic(this, &UCardWidget::OnCardClicked);
     }
 }
 
-void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Health, int32 Combat)
+void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Health, int32 Combat, const FString& ImagePath)
 {
     CardName = Name;
     CardPoints = Points;
     CardHealth = Health;
     CardCombat = Combat;
-
+    CardImagePath = ImagePath;
 
     if (CardNameText) {
         CardNameText->SetText(FText::FromString(CardName));
@@ -42,10 +42,29 @@ void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Heal
         CardCombatText->SetText(FText::FromString(FString::Printf(TEXT("CP : %d"), CardCombat)));
     }
 
+    if (CardImage)
+    {
+        UTexture2D* Texture = LoadTextureFromPath(ImagePath);
+        if (Texture)
+        {
+            FSlateBrush Brush;
+            Brush.SetResourceObject(Texture);
+            Brush.ImageSize = FVector2D(128.0f, 128.0f); // or use texture dimensions
+            CardImage->SetBrush(Brush);
+        }
+    }
+
     OnCardVariablesSet();
 }
 
 void UCardWidget::OnCardClicked() {
     UE_LOG(LogTemp, Warning, TEXT("Card %s clicked"), *CardName);
     CardDisplayRef->SetLastClickedCard(this);
+}
+
+UTexture2D* UCardWidget::LoadTextureFromPath(const FString& Path)
+{
+    if (Path.IsEmpty()) return nullptr;
+
+    return Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *Path));
 }

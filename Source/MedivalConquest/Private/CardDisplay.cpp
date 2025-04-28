@@ -47,7 +47,7 @@ UCardWidget* UCardDisplay::CreateCardWidget(const FCardDataToReplicate& CardData
 
     if (NewCardWidget)
     {
-        NewCardWidget->SetCardVariables(CardData.Name, CardData.Points, CardData.Health, CardData.Combat);
+        NewCardWidget->SetCardVariables(CardData.Name, CardData.Points, CardData.Health, CardData.Combat, CardData.Image);
         UE_LOG(LogTemp, Display, TEXT("Created card widget: %s"), *CardData.Name);
 
         NewCardWidget->SetCardDisplayReference(this);

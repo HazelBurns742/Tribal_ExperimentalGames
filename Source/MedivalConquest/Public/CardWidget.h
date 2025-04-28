@@ -6,7 +6,9 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h" 
+#include "Components/Image.h"
 #include "CardWidget.generated.h"
+
 
 class UTextBlock;
 class UCardDisplay;
@@ -18,7 +20,7 @@ class MEDIVALCONQUEST_API UCardWidget : public UUserWidget
 
 public:
     UFUNCTION(BlueprintCallable, Category = "Card Display")
-    void SetCardVariables(const FString& Name, int32 Points, int32 Health, int32 Combat);
+    void SetCardVariables(const FString& Name, int32 Points, int32 Health, int32 Combat, const FString& ImagePath);
 
 
     UFUNCTION(BlueprintImplementableEvent)
@@ -42,6 +44,10 @@ public:
 
     UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Card Data")
     int32 CardCombat;
+
+    UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Card Data")
+    FString CardImagePath;
+
 protected:
     virtual void NativeConstruct() override;
 
@@ -59,5 +65,10 @@ private:
     UPROPERTY(meta = (BindWidget))
     UTextBlock* CardCombatText;
 
+    UPROPERTY(meta = (BindWidget))
+    UImage* CardImage;
+
     UCardDisplay* CardDisplayRef = nullptr;
+
+    UTexture2D* LoadTextureFromPath(const FString& Path);
 };
