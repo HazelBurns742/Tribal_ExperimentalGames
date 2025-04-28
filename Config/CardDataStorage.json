@@ -69,7 +69,7 @@
     },
     {
       "Name": "Minotaur",
-      "Image": "/Game/2D_Art/Art/minoatur.minoatur",
+      "Image": "/Game/2D_Art/Art/minotaur.minotaur",
       "Model": "Minotaur.fbx",
       "Points": 5,
       "Health": 3,
