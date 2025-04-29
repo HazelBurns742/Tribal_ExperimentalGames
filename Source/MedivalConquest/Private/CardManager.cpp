@@ -25,7 +25,7 @@ void ACardManager::BeginPlay() {
 	if (HasAuthority()) {
 		if (!isCardDataLoaded) {
 
-			FString FilePath = FPaths::ProjectDir() + TEXT("Config/CardDataStorage.json");
+			FString FilePath = FPaths::ProjectContentDir() + TEXT("Data/CardDataStorage.json");
 
 			//DEBUGGING
 

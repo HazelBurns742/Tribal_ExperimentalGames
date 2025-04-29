@@ -134,7 +134,7 @@ void ATurnManager::SetPlayerHand(FClientData& Client) {
 void ATurnManager::StartTurn() {
 
 	UE_LOG(LogTemp, Display, TEXT("Start Turn called in script"));
-	if (!Clients.IsValidIndex(currentPlayer)) return; 
+	//if (!Clients.IsValidIndex(currentPlayer)) return; 
 
 	UE_LOG(LogTemp, Display, TEXT("If statement passed"));
 
