@@ -16,6 +16,7 @@ ATurnManager::ATurnManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Initlising values
 	currentTurn = 0; 
 	amountOfPlayers; 
 	currentPlayer; 
@@ -26,11 +27,15 @@ ATurnManager::ATurnManager()
 void ATurnManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Spawn the Card Manager
 	UE_LOG(LogTemp, Warning, TEXT("TURN MANAGER WAS SPAWNED!"));
 	CardManager = GetWorld()->SpawnActor<ACardManager>(ACardManager::StaticClass());
 
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PC && CardDisplayClass) {
+
+		//Create and add the card display UI
 		CachedCardDisplay = CreateWidget<UCardDisplay>(PC, CardDisplayClass);
 		if (CachedCardDisplay) {
 			CachedCardDisplay->AddToViewport();
@@ -65,6 +70,7 @@ void ATurnManager::AddPlayer()
 			//Use random seed for each player (Different ones)
 			FMath::RandInit(FDateTime::Now().GetTicks() + i);
 
+			//Shuffle the players deck
 			ShuffleMyDeck(Deck);
 			MyCardDeckPointer = 0;
 
@@ -90,6 +96,7 @@ void ATurnManager::AddPlayer()
 }
 
 void ATurnManager::ShuffleMyDeck(TArray<FCardDataToReplicate>& DeckToShuffle) {
+	//For every number of card in the deck, shuffle by swapping random nums
 	int32 NumCardsInDeck = DeckToShuffle.Num();
 	for (int32 i = 0; i < NumCardsInDeck - 1; i++) {
 		int32 RandomIndex = FMath::RandRange(i, NumCardsInDeck - 1);
@@ -176,6 +183,7 @@ void ATurnManager::EndTurn() {
 	}
 
 	else if (TurnNum > 15) { //I know i could probably use an else, might change later
+		HighestGold = 0; 
 		UE_LOG(LogTemp, Warning, TEXT("Turns over"));
 		for (FClientData& Client : Clients) {
 			if (Client.Gold > HighestGold) {
@@ -243,7 +251,9 @@ void ATurnManager::UpdatePlayerUI() {
 }
 
 void ATurnManager::UpdateGold(const TMap<FString, UTileData*>& InTileMap, TArray<FClientData>& InClients) {
+	//Stores the amount of tiles each player owns in a hex
 	TMap<FString, TMap<FString, int32>> PlayerHexCounts;
+	//for every tile owned by a player
 	for (const TPair<FString, UTileData*>& Entry : TileMap) {
 		UTileData* Tile = Entry.Value;
 		if (Tile && !Tile->PlayerID.IsEmpty()) {
@@ -257,19 +267,23 @@ void ATurnManager::UpdateGold(const TMap<FString, UTileData*>& InTileMap, TArray
 		}
 	}
 
+	//Loop through all players to calcualte and assign gold
 	for (FClientData& Client : Clients) {
 		UE_LOG(LogTemp, Warning, TEXT("Checking client: %s"), *Client.ClientID);
 
+		//If the player owns any tiles
 		if (TMap<FString, int32>* HexCounts = PlayerHexCounts.Find(Client.ClientID)) {
 			for (const TPair<FString, int32>& HexEntry : *HexCounts) {
 				int32 TileCountInHex = HexEntry.Value;
 				if (TileCountInHex >= 3) {
-					Client.Gold += 5;
+					//Give the client 10 gold as they own 3 or more tiles in a hex
+					Client.Gold += 10;
 					UE_LOG(LogTemp, Warning, TEXT("Client %s has %d tiles in Hex %s -> +5 gold"), *Client.ClientID, TileCountInHex, *HexEntry.Key);
 				}
 
 				else {
-					Client.Gold += 1;
+					//The client owns less than 3 tiles in a hex, give 5 gold
+					Client.Gold += 5;
 					UE_LOG(LogTemp, Warning, TEXT("Client %s has %d tiles in Hex %s -> +1 gold"), *Client.ClientID, TileCountInHex, *HexEntry.Key);
 				}
 			}

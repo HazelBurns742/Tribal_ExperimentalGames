@@ -43,13 +43,16 @@ UCardWidget* UCardDisplay::CreateCardWidget(const FCardDataToReplicate& CardData
         return nullptr;
     }
 
+    //Create the card widget using the card widget script
     UCardWidget* NewCardWidget = CreateWidget<UCardWidget>(GetWorld(), CardWidgetClass);
 
     if (NewCardWidget)
     {
+        //Set the widget card data
         NewCardWidget->SetCardVariables(CardData.Name, CardData.Points, CardData.Health, CardData.Combat, CardData.Image);
         UE_LOG(LogTemp, Display, TEXT("Created card widget: %s"), *CardData.Name);
 
+        //Set reference
         NewCardWidget->SetCardDisplayReference(this);
     }
     else
@@ -66,11 +69,13 @@ void UCardDisplay::UpdateCardDisplay(const TArray<FCardDataToReplicate>& HandOfC
     DislayClientIDRef = ClientID;
     if (CardContainer)
     {
+        //Clear existing cards
         CardContainer->ClearChildren();
         UE_LOG(LogTemp, Display, TEXT("Updating card display with %d cards"), HandOfCards.Num());
     }
     for (const FCardDataToReplicate& CardData : HandOfCards)
     {
+        //Create and add the cards in the players hand to the UI 
         UCardWidget* NewCardWidget = CreateCardWidget(CardData);
         if (NewCardWidget)
         {
@@ -96,13 +101,17 @@ void UCardDisplay::OnConfirmClicked()
 {
     if (LastClickedCard)
     {
+        //Removing the card the player chose from the UI
         UE_LOG(LogTemp, Warning, TEXT("Card selected, do logic?"));
         RemoveCardFromDisplay(LastClickedCard);
 
         ATurnManager* TurnManager = nullptr;
         TArray<AActor*> FoundActors;
+
+        //Get the turn manager actors in the world
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATurnManager::StaticClass(), FoundActors);
 
+        //If there are any turn managers in the scene get the first one
         if (FoundActors.Num() > 0)
         {
             TurnManager = Cast<ATurnManager>(FoundActors[0]);
@@ -114,6 +123,7 @@ void UCardDisplay::OnConfirmClicked()
             FText NameToPassText = NameToPass->GetText();
             UE_LOG(LogTemp, Warning, TEXT("Passing card name to turn manager"));
 
+            //Tell turn manager what card the player chose
             TurnManager->PlayerChoseCard(NameToPassText.ToString());
         }
 

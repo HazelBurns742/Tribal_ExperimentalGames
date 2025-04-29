@@ -10,6 +10,7 @@ void UCardWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
+    //Initilising the card variables
     SetCardVariables(CardName, CardPoints, CardHealth, CardCombat, CardImagePath);
 
     if (CardButton) {
@@ -25,6 +26,7 @@ void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Heal
     CardCombat = Combat;
     CardImagePath = ImagePath;
 
+    //Update UI text with their values
     if (CardNameText) {
         CardNameText->SetText(FText::FromString(CardName));
     }
@@ -42,6 +44,7 @@ void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Heal
         CardCombatText->SetText(FText::FromString(FString::Printf(TEXT("CP : %d"), CardCombat)));
     }
 
+    //Update UI image with card art
     if (CardImage)
     {
         UTexture2D* Texture = LoadTextureFromPath(ImagePath);
@@ -49,7 +52,7 @@ void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Heal
         {
             FSlateBrush Brush;
             Brush.SetResourceObject(Texture);
-            Brush.ImageSize = FVector2D(128.0f, 128.0f); // or use texture dimensions
+            Brush.ImageSize = FVector2D(128.0f, 128.0f); 
             CardImage->SetBrush(Brush);
         }
     }
@@ -58,6 +61,7 @@ void UCardWidget::SetCardVariables(const FString& Name, int32 Points, int32 Heal
 }
 
 void UCardWidget::OnCardClicked() {
+    //Tells the card display this card was clicked
     UE_LOG(LogTemp, Warning, TEXT("Card %s clicked"), *CardName);
     CardDisplayRef->SetLastClickedCard(this);
 }
